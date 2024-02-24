@@ -1,0 +1,36 @@
+$menu-item-size: 20px;
+
+
+.mobile-bottom-menu {
+    min-height: $menu-item-size + 50px;
+}
+
+.menu-item {
+
+    &:hover {
+        color: $primary;
+        span {
+            text-shadow: 0 0 10px $primary;
+        }
+    }
+
+    svg {
+        width: $menu-item-size;
+        height: $menu-item-size;
+    }
+    span {
+        font-size: 11px;
+    }
+
+    &.active {
+        color: $primary;
+        
+        span {
+            text-shadow: 0 0 10px $primary;
+        }
+    }
+
+    
+    
+}
+

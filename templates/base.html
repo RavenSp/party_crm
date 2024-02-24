@@ -1,0 +1,152 @@
+{% load static %}
+<!doctype html>
+<html lang="ru" data-bs-theme="auto">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ meta_descripiton }}">
+    <title>{% if title %}{{ title }} | {% endif %}CRM Рабочй партии России</title>
+    <link href="{% static "css/main.css" %}" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top bg-body-tertiary d-none d-md-block">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Рабочая партия России</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Dropdown
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <main class="container pt-3 mt-md-5">
+
+        <!-- div class="row">
+              <div class="col">
+
+                <button 
+                class="btn btn-primary"
+                onclick='document.getElementById("mobile-menu-bottom").hidden = !document.getElementById("mobile-menu-bottom").hidden;'
+                >Скрыть меню</button></div>
+            </div -->
+        <div class="row">
+            <div class="col">
+                <h3>Статистика раздач</h3>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Фамилия, Имя</th>
+                            <th scope="col">Кол-во газет
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                    <path
+                                        d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                </svg>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Федин А.</td>
+                            <td>2 432</td>
+                        </tr>
+                        <tr>
+                            <td>Шамардин В.</td>
+                            <td>1 023</td>
+                        </tr>
+                        <tr>
+                            <td>Антипов И.</td>
+                            <td>854</td>
+                        </tr>
+                        <tr>
+                            <td>Артменков Д.</td>
+                            <td>745</td>
+                        </tr>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Дополнительное меню -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div>
+                Какой-то текст в качестве заполнителя. В реальной жизни у вас могут быть элементы, которые Вы выбрали.
+                Нравится, текст, изображения, списки и т. д.
+            </div>
+            <div class="dropdown mt-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-bs-toggle="dropdown">
+                    Кнопка раскрывающегося списка
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><a class="dropdown-item" href="#">Действие</a></li>
+                    <li><a class="dropdown-item" href="#">Другое действие</a></li>
+                    <li><a class="dropdown-item" href="#">Что-то еще здесь</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Конец дополнительного меню -->
+    <!-- МОБИЛЬНОЕ МЕНЮ -->
+    {% include "mobile_menu.html" %}
+    <!-- КОНЕЦ МОБИЛЬНОГО МЕНЮ -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+        crossorigin="anonymous"></script>
+    <script>
+        const toastTrigger = document.getElementById('liveToastBtn')
+        const toastLiveExample = document.getElementById('liveToast')
+
+        if (toastTrigger) {
+            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+            toastTrigger.addEventListener('click', () => {
+                toastBootstrap.show()
+            })
+        }
+    </script>
+</body>
+
+</html>

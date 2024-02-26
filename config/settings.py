@@ -29,7 +29,7 @@ BASE_URL = 'http://localhost:8000'
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ["https://*", "http://*", "https://firm-oddly-husky.ngrok-free.app"]
 
-
+AUTH_USER_MODEL = 'person.Person'
 
 # Application definition
 
@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_htmx',
+    'widget_tweaks',
+    'render_block',
+    'person',
 ]
 
 MIDDLEWARE = [

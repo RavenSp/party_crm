@@ -19,7 +19,7 @@ class Person(AbstractUser):
     bio = models.TextField(verbose_name='Биография', blank=True, null=True)
     party_member = models.BooleanField(verbose_name='Член партии', default=True)
     party_ticket_number = models.CharField(verbose_name='Номер партбилета', max_length=255, blank=True, null=True)
-    party_organization = models.ForeignKey(to=PartyOrganization, verbose_name='Партйиная организация', blank=True, null=True)
+    party_organization = models.ForeignKey(to=PartyOrganization, verbose_name='Партйиная организация', blank=True, null=True, on_delete=models.SET_NULL)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

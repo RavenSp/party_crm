@@ -14,7 +14,7 @@ class Newspaper(models.Model):
 
 
 class NewspaperNumber(models.Model):
-    newspaper = models.ForeignKey(to=Newspaper, verbose_name='Газета')
+    newspaper = models.ForeignKey(to=Newspaper, verbose_name='Газета', on_delete=models.PROTECT)
     number = models.CharField(verbose_name='Номер', max_length=255)
     year = models.DateField(verbose_name='Год и месяц выхода', null=True, blank=True)
 
@@ -54,7 +54,7 @@ class Town(models.Model):
 class FactoryPoint(models.Model):
     title = models.CharField(verbose_name='Наименование предприятия', max_length=255)
     description = models.TextField(blank=True, null=True, verbose_name='Примечание')
-    town = models.ForeignKey(to=Town, verbose_name='Город расположения', related_name='factories')
+    town = models.ForeignKey(to=Town, verbose_name='Город расположения', related_name='factories', on_delete=models.PROTECT)
     geo_lat = models.FloatField(verbose_name='Широта', blank=True, null=True)
     geo_lon = models.FloatField(verbose_name='Долгота', blank=True, null=True)
 
@@ -68,8 +68,8 @@ class FactoryPoint(models.Model):
 
 class Distribution(models.Model):
     distribution_date = models.DateField(verbose_name='Дата раздачи')
-    autor = models.ForeignKey(to=Person, verbose_name='Автор записи')
-    factory = models.ForeignKey(to=FactoryPoint, verbose_name='Предприятие')
+    autor = models.ForeignKey(to=Person, verbose_name='Автор записи', on_delete=models.PROTECT)
+    factory = models.ForeignKey(to=FactoryPoint, verbose_name='Предприятие', on_delete=models.PROTECT)
     start_time = models.TimeField(verbose_name='Начало раздачи')
     end_time = models.TimeField(verbose_name='Окончание раздачи')
     description = models.TextField(blank=True, null=True, verbose_name='Примечание')
@@ -86,16 +86,16 @@ class Distribution(models.Model):
 
 
 class NewspaperNumbersOnDistribution(models.Model):
-    distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='numbers')
-    number = models.ForeignKey(to=NewspaperNumber, verbose_name='Номер газеты', related_name='distributions')
+    distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='numbers', on_delete=models.CASCADE)
+    number = models.ForeignKey(to=NewspaperNumber, verbose_name='Номер газеты', related_name='distributions', on_delete=models.PROTECT)
     quantity = models.IntegerField(verbose_name='Количество')
 
 
 class DistributionPartyMembers(models.Model):
-    member = models.ForeignKey(to=Person, verbose_name='Раздающий', related_name='distributions')
-    distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='party_members')
+    member = models.ForeignKey(to=Person, verbose_name='Раздающий', related_name='distributions', on_delete=models.PROTECT)
+    distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='party_members', on_delete=models.CASCADE)
 
 
 class DistributionSympathizerMember(models.Model):
-    member = models.ForeignKey(to=Sympathizer, verbose_name='Раздающий сочувствующий', related_name='distributions')
-    distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='sympathizer_members')
+    member = models.ForeignKey(to=Sympathizer, verbose_name='Раздающий сочувствующий', related_name='distributions', on_delete=models.PROTECT)
+    distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='sympathizer_members', on_delete=models.CASCADE)

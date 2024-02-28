@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django_htmx',
     'widget_tweaks',
     'render_block',
-    'person',
+    'person.apps.PersonConfig',
+    'press.apps.PressConfig'
 ]
 
 MIDDLEWARE = [

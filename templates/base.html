@@ -23,42 +23,7 @@
                 onclick='document.getElementById("mobile-menu-bottom").hidden = !document.getElementById("mobile-menu-bottom").hidden;'
                 >Скрыть меню</button></div>
             </div -->
-        <div class="row">
-            <div class="col">
-                <h3>Статистика раздач</h3>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">Фамилия, Имя</th>
-                            <th scope="col">Кол-во газет
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-caret-down-fill" viewBox="0 0 16 16">
-                                    <path
-                                        d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
-                                </svg>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Федин А.</td>
-                            <td>2 432</td>
-                        </tr>
-                        <tr>
-                            <td>Шамардин В.</td>
-                            <td>1 023</td>
-                        </tr>
-                        <tr>
-                            <td>Антипов И.</td>
-                            <td>854</td>
-                        </tr>
-                        <tr>
-                            <td>Артменков Д.</td>
-                            <td>745</td>
-                        </tr>
-                </table>
-            </div>
-        </div>
+        {% block main_content %}{% endblock %}
     </main>
 
     <!-- Дополнительное меню -->

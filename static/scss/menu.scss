@@ -6,6 +6,13 @@ $menu-item-size: 20px;
 }
 
 .menu-item {
+    text-decoration: none;
+    text-decoration-color: #1b1b1b;
+    color: #000000;
+    &a {
+        text-decoration: none;
+        color: #000000;
+    }
 
     &:hover {
         color: $primary;
@@ -20,6 +27,7 @@ $menu-item-size: 20px;
     }
     span {
         font-size: 11px;
+        text-decoration: none;
     }
 
     &.active {

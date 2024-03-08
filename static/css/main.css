@@ -3,6 +3,15 @@
   min-height: 70px;
 }
 
+.menu-item {
+  text-decoration: none;
+  text-decoration-color: #1b1b1b;
+  color: #000000;
+}
+.menu-itema {
+  text-decoration: none;
+  color: #000000;
+}
 .menu-item:hover {
   color: #720000;
 }
@@ -15,6 +24,7 @@
 }
 .menu-item span {
   font-size: 11px;
+  text-decoration: none;
 }
 .menu-item.active {
   color: #720000;

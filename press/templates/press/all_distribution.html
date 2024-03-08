@@ -2,16 +2,28 @@
 
 {% block main_content %}
     <div class="row">
-        <div class="col">
+        <div class="col-md-9 col-10">
             <h3>Мои раздачи</h3>
         </div>
-        <div class="col-xs-1 col-md-3">
-            <button class="btn btn-primary">+</button>
+    </div>
+    <div class=" pb-2">
+        <div class="col" id="distib-menu">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newDistribution">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square-fill" viewBox="0 0 16 16">
+                  <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>
+                </svg>
+                <span> Новая раздача</span></button>
+            <button class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16">
+                  <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/>
+                </svg> Фильтр
+            </button>
+            {% include 'press/new-distrib.html' %}
         </div>
     </div>
-    <div class="row">
-        <div class="col">
-            {{ request.path }}
-        </div>
+    <div class="collapse" id="collapseFilter">
+      <div class="card card-body">
+        {% include 'press/filter-my-distrib.html' %}
+      </div>
     </div>
 {% endblock %}

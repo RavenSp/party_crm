@@ -1,0 +1,19 @@
+
+<div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="choice-modal-fabric" tabindex="-1" aria-labelledby="choice-modal-fabricLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Выберите предприятие</h1>
+      </div>
+      <div class="modal-body">
+        <ul class="choice_list">
+            {% for fabric in fabrics %}
+            <li class="choice_item" onclick="" data-pk-choice="{{ fabric.pk }}">
+                {{ fabric.title }}
+            </li>
+            {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

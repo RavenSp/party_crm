@@ -3,6 +3,7 @@ $menu-item-size: 20px;
 
 .mobile-bottom-menu {
     min-height: $menu-item-size + 50px;
+    transition: all .2s linear;
 }
 
 .menu-item {

@@ -1,6 +1,6 @@
 from django.db import models
 from person.models import Person
-
+from helpers.common import name_normalizer
 
 class Newspaper(models.Model):
     title = models.CharField(verbose_name='Название газеты', max_length=255)
@@ -35,6 +35,10 @@ class Sympathizer(models.Model):
     class Meta:
         verbose_name = 'Сочувствующий'
         verbose_name_plural = 'Сочувствующие'
+
+    @property
+    def normalize_name(self):
+        return name_normalizer(self.name)
 
     def __str__(self):
         return f"соч. {self.name}"

@@ -8,8 +8,8 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-12 col-md-8 form-new-distrib" style="overflow-y: scroll">
-            <form>
+        <div class="col-12 col-md-8 form-new-distrib">
+            <form id="new-distrib">
                 <div class="mb-2">
                     <label for="{{ form.factory.id_for_label }}" class="form-label">{{ form.factory.label }}</label>
                     {% render_field form.factory class='form-select' id='fabric' required='true' data-placeholder='Выберите предприятие' %}
@@ -31,32 +31,36 @@
                         {% render_field form.end_time class='form-control mb-2' type='time' min='' %}
                     </div>
                 </div>
-                <div class="mb-2">
-                    <label for="party-members" class="form-label">Участники-члены партии</label>
-                    <select class="form-select"
-                            aria-label="Default select example"
-                            id="party-members"
-                            name="party-members"
-                            data-placeholder='Выберите членов партии'
-                            multiple>
-                        {% for member in party_members %}
-                            <option value="{{ member.pk }}">{{ member.email }} {{ member.get_full_name }}</option>
-                        {% endfor %}
-                    </select>
+                <div class="mb-2" id="party-member-list" hx-validate="true">
+                    <label for="party-members" class="form-label">Участники-члены партии:</label>
                 </div>
-            <div class="mb-2">
+            <button
+                    class="mb-2 btn btn-sm btn-secondary"
+                    hx-post="{% url 'press:htmx-add-party-member' %}"
+                    hx-include="#party-member-list"
+                    hx-target="#party-member-list"
+                    hx-swap="beforeend"
+                    onclick="[].slice.call(document.querySelectorAll('#party-member-list select')).forEach((e) => (e.readonly = true))"
+            ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+              <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+            </svg> Добавить раздающего партийца</button>
+                <hr>
+            <div class="mb-2" id="sympathizers-member-list">
                     <label for="sympathizers" class="form-label">Сочувствующие:</label>
-                    <select class="form-select"
-                            aria-label="Default select example"
-                            id="sympathizers"
-                            name="sympathizers"
-                            data-placeholder='Выберите или добавьте сочувствующих'
-                            multiple>
-                        {% for sympathizer in sympathizers %}
-                            <option value="{{ sympathizer.pk }}">{{ sympathizer.name }}</option>
-                        {% endfor %}
-                    </select>
+
                 </div>
+                <button
+                            class="mb-2 btn btn-sm btn-secondary"
+                            hx-post="{% url 'press:htmx-add-sympathizer' %}"
+                            hx-include="#sympathizers-member-list"
+                            hx-target="#sympathizers-member-list"
+                            hx-swap="beforeend"
+                    ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                      <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                    </svg> Добавить раздающего сочувствующего</button>
+                <hr>
             <div class="mb-2">
                 <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
                 {% render_field form.description class='form-control' rows='3' %}

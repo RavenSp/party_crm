@@ -1,4 +1,8 @@
 @charset "UTF-8";
+#new-distrib {
+  margin-bottom: 8em;
+}
+
 .mobile-bottom-menu {
   min-height: 70px;
   transition: all 0.2s linear;

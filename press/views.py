@@ -2,6 +2,7 @@ import datetime
 
 from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
+from django.views.decorators.http import require_http_methods
 from .forms import DistributionForm
 from .models import FactoryPoint, Sympathizer
 from helpers.common import name_normalizer
@@ -23,6 +24,7 @@ def new_distrib(request: HttpRequest):
             'end_time': datetime.datetime.now().strftime("%H:%M"),
         })
 
+        request.session['select_party_members'] = []
         party_members = Person.objects.filter(party_member=True).order_by('-last_name').all()
         sympathizers = Sympathizer.objects.all()
         return render(request, 'press/new-distrib.html', {
@@ -55,3 +57,40 @@ def new_sympathizer_distrib(request: HttpRequest):
         sympathizers = [x for x in sympathizers if x.normalize_name not in [name_normalizer(x) for x in already_selected if x != '']]
 
     return render(request, 'press/sypathizer_member_field.html', {'sympathizers': sympathizers})
+
+
+@require_http_methods(['DELETE'])
+def hx_delete_party_member(request: HttpRequest, id_delete_member: int):
+    select_party_members = set(request.session.get('select_party_members', []))
+    if str(id_delete_member) not in select_party_members:
+        return HttpResponse('', status='204')
+    else:
+        select_party_members.remove(str(id_delete_member))
+    request.session['select_party_members'] = list(select_party_members)
+    
+    select_members = Person.objects.filter(pk__in=list(select_party_members)).all()
+    not_select_members = Person.objects.exclude(pk__in=list(select_party_members)).all()
+    
+    return render(request, 'press/party_member_list2.html', {
+        'select_members': select_members,
+        'party_members': not_select_members
+    })
+
+
+@require_http_methods(['POST'])
+def hx_add_party_member(request: HttpRequest):
+    new_member = request.POST.get('select-party-members', None)
+    if new_member is None:
+        print("пустой ID")
+        return HttpResponse('', status='204')
+    select_party_members = set(request.session.get('select_party_members', []))
+    select_party_members.add(str(new_member))
+    request.session['select_party_members'] = list(select_party_members)
+    
+    select_members = Person.objects.filter(pk__in=list(select_party_members)).all()
+    not_select_members = Person.objects.exclude(pk__in=list(select_party_members)).all()
+    
+    return render(request, 'press/party_member_list2.html', {
+        'select_members': select_members,
+        'party_members': not_select_members
+    })

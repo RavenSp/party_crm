@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from .forms import DistributionForm
-from .models import FactoryPoint, Sympathizer
+from .models import FactoryPoint, Sympathizer, NewspaperNumber
 from helpers.common import name_normalizer
 from person.models import Person
 
@@ -27,10 +27,12 @@ def new_distrib(request: HttpRequest):
         request.session['select_party_members'] = []
         party_members = Person.objects.filter(party_member=True).order_by('-last_name').all()
         sympathizers = Sympathizer.objects.all()
+        newspapers = NewspaperNumber.objects.select_related('newspaper').order_by('year').all()
         return render(request, 'press/new-distrib.html', {
             'form': form,
             'party_members': party_members,
-            'sympathizers': sympathizers
+            'sympathizers': sympathizers,
+            'newspapers': newspapers
         })
     elif request.method == 'POST':
         pass
@@ -94,3 +96,8 @@ def hx_add_party_member(request: HttpRequest):
         'select_members': select_members,
         'party_members': not_select_members
     })
+
+
+def hx_newspaper(request: HttpRequest):
+    newspapers = NewspaperNumber.objects.select_related('newspaper').order_by('year').all()
+    return  render(request, 'press/newspapers_field.html', {'newspapers': newspapers})

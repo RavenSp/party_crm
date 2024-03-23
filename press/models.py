@@ -4,6 +4,8 @@ from helpers.common import name_normalizer
 
 class Newspaper(models.Model):
     title = models.CharField(verbose_name='Название газеты', max_length=255)
+    short_title = models.CharField(verbose_name='Краткое название', max_length=10)
+    
 
     def __str__(self):
         return str(self.title)
@@ -14,7 +16,7 @@ class Newspaper(models.Model):
 
 
 class NewspaperNumber(models.Model):
-    newspaper = models.ForeignKey(to=Newspaper, verbose_name='Газета', on_delete=models.PROTECT)
+    newspaper = models.ForeignKey(to=Newspaper, verbose_name='Газета', on_delete=models.PROTECT, related_name='newspaper')
     number = models.CharField(verbose_name='Номер', max_length=255)
     year = models.DateField(verbose_name='Год и месяц выхода', null=True, blank=True)
 

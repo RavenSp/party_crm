@@ -24,25 +24,16 @@
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% include 'top_menu.html' %}
     <main class="container pt-3 mt-md-5" id="main-container">
-
-        <!-- div class="row">
-              <div class="col">
-
-                <button 
-                class="btn btn-primary"
-                onclick='document.getElementById("mobile-menu-bottom").hidden = !document.getElementById("mobile-menu-bottom").hidden;'
-                >Скрыть меню</button></div>
-            </div -->
         {% block main_content %}{% endblock %}
     </main>
-
+    {% if request.user.is_authenticated %}
     <!-- Дополнительное меню -->
     {% include 'left_menu.html' %}
     <!-- Конец дополнительного меню -->
     <!-- МОБИЛЬНОЕ МЕНЮ -->
     {% include "mobile_menu.html" %}
     <!-- КОНЕЦ МОБИЛЬНОГО МЕНЮ -->
-
+    {% endif %}
     <script>
         function alpineSelect() {
             return {

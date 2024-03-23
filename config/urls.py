@@ -18,10 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from django.views.generic import TemplateView
+from person.views import login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='base.html')),
+    path('', login, name='login'),
     path('press/', include(('press.urls', 'press'), namespace='press')),
     path('profile/', include(('person.urls', 'person'), namespace='person')),
 ]

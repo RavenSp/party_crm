@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Вход в партийную базу данных{% endblock title %}
+{% block styles %}
+<link rel="stylesheet" href="">
+{% endblock styles %}
+
+{% block main_content %}
+<div class="login-page">
+    <main class="form-signin w-100 m-auto">
+        <form method="post" action="">
+          <h1 class="h2 mb-3 fw-normal">Вход</h1>
+          {% if login_error %}
+          <div class="alert alert-danger" id="login-error" role="alert">
+            <strong>Неверные логин или пароль</strong>
+          </div>
+          {% endif %}
+          <div class="form-floating">
+            <input type="email" class="form-control" id="email" name="email"
+    
+              required placeholder="Введите вашу партийную почту">
+            <label for="inn">Email</label>
+          </div>
+          <div class="form-floating">
+            <input type="password" class="form-control" required id="password" name="password" placeholder="Password">
+            <label for="password">Пароль</label>
+          </div>
+          <button class="w-100 btn btn-lg btn-primary" type="submit">Вход</button>
+        </form>
+      </main>
+</div>
+{% endblock main_content %}

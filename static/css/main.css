@@ -1,4 +1,8 @@
 @charset "UTF-8";
+.login-page {
+  max-width: 100px;
+}
+
 #new-distrib {
   margin-bottom: 8em;
 }

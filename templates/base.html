@@ -27,12 +27,12 @@
         {% block main_content %}{% endblock %}
     </main>
     {% if request.user.is_authenticated %}
-    <!-- Дополнительное меню -->
-    {% include 'left_menu.html' %}
-    <!-- Конец дополнительного меню -->
-    <!-- МОБИЛЬНОЕ МЕНЮ -->
-    {% include "mobile_menu.html" %}
-    <!-- КОНЕЦ МОБИЛЬНОГО МЕНЮ -->
+        <!-- Дополнительное меню -->
+        {% include 'left_menu.html' %}
+        <!-- Конец дополнительного меню -->
+        <!-- МОБИЛЬНОЕ МЕНЮ -->
+        {% include "mobile_menu.html" %}
+        <!-- КОНЕЦ МОБИЛЬНОГО МЕНЮ -->
     {% endif %}
     <script>
         function alpineSelect() {

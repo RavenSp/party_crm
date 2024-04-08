@@ -68,6 +68,11 @@
                 <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
                 {% render_field form.description class='form-control' rows='3' %}
             </div>
+                <hr>
+            <div class="mb-3 d-flex justify-content-end gap-2">
+                <input type="submit" value="Сохранить" class="btn btn-primary">
+                <input type="reset" value="Отмена" class="btn btn-secondary">
+            </div>
             </form>
         </div>
     </div>

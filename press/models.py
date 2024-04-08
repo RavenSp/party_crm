@@ -2,6 +2,7 @@ from django.db import models
 from person.models import Person
 from helpers.common import name_normalizer
 
+
 class Newspaper(models.Model):
     title = models.CharField(verbose_name='Название газеты', max_length=255)
     short_title = models.CharField(verbose_name='Краткое название', max_length=10)

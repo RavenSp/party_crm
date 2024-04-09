@@ -9,7 +9,10 @@
     </div>
     <div class="row">
         <div class="col-12 col-md-8 form-new-distrib">
-            <form id="new-distrib">
+            <form id="new-distrib"
+                  hx-post="{% url 'press:new-distrib' %}"
+                  hx-target=""
+            >
                 <div class="mb-2">
                     <label for="{{ form.factory.id_for_label }}" class="form-label">{{ form.factory.label }}</label>
                     {% render_field form.factory class='form-select' id='fabric' required='true' data-placeholder='Выберите предприятие' %}

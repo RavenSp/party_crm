@@ -21,8 +21,10 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
 </head>
 
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' id="body">
+    {% if request.user.is_authenticated %}
     {% include 'top_menu.html' %}
+    {% endif %}
     <main class="container pt-3 mt-md-5" id="main-container">
         {% block main_content %}{% endblock %}
     </main>

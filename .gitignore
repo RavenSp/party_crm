@@ -160,4 +160,4 @@ cython_debug/
 .idea/
 static/node_modules
 package.json
-package-
+node_modules

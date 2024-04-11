@@ -35,7 +35,27 @@ def new_distrib(request: HttpRequest):
             'newspapers': newspapers
         })
     elif request.method == 'POST':
-        pass
+        form = DistributionForm(request.POST)
+        party_members = request.session.get('select_party_members', [])
+        sympathizers = request.POST.getlist('sympathizer-members', [])
+        newspapers = request.POST.getlist('newspaper', [])
+        newspapers_quantity = request.POST.getlist('newspaper-quantity', [])
+        error_list = []
+
+        if len(party_members) + len(sympathizers) == 0:
+            error_list.append('Должен быть хотя бы один раздающий!')
+
+        if len(newspapers) == 0 or len(newspapers_quantity) == 0:
+            error_list.append('Должна быть роздана хотя бы 1 газета')
+
+        if len(newspapers) != len(newspapers_quantity):
+            error_list.append('Некорректно введены данные о газетах!')
+
+
+        if form.is_valid():
+            pass
+        else:
+            form.errors
 
 
 def new_party_member_distrib(request: HttpRequest):

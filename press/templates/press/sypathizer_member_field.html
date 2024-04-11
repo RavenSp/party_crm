@@ -7,6 +7,7 @@
                list="{% now 'U' %}-data-sympathizer-members"
                autocomplete="off"
                onmousedown="value = '';"
+               required
         >
         <datalist id="{% now 'U' %}-data-sympathizer-members">
             {% for symp  in sympathizers %}

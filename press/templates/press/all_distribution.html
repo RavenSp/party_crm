@@ -26,5 +26,29 @@
         {% include 'press/filter-my-distrib.html' %}
       </div>
     </div>
+    <div id="table-distrib">
+        <table class="table table-striped table-sm">
+            <thead>
+            <th>Дата</th>
+            <th>Участники</th>
+            <th>Кол-во</th>
+            </thead>
+            <tbody>
+            {% for distirb in distribs %}
+            <tr>
+                <td>{{ distirb.distribution_date }}</td>
+                <td>
+                    {% for member in distirb.party_members %}{{ member }}{% if not forloop.last  %}, {% endif %}{% endfor %}
+                {% if distrib.sympathizer_members|length > 0 %}<br>{% endif %}
+                {% for member in distirb.sympathizer_members %}{{ member }}{% if not forloop.last  %}, {% endif %}{% endfor %}
+                </td>
+                <td>
+
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
     </div>
 {% endblock %}

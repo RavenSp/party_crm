@@ -22,7 +22,7 @@ from person.views import login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', login, name='login'),
+    path('login/', login, name='login'),
     path('press/', include(('press.urls', 'press'), namespace='press')),
     path('profile/', include(('person.urls', 'person'), namespace='person')),
 ]

@@ -34,3 +34,11 @@ class Person(AbstractUser):
             raise ValueError('Чтобы добавить человека в партийную организацию он должен быть челном партии!')
         self.party_organization = party_organization
 
+
+    @property
+    def full_name(self):
+        if self.last_name or self.first_name:
+            return " ".join([self.last_name, self.first_name])
+        else:
+            return self.email
+

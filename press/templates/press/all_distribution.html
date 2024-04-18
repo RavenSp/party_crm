@@ -36,14 +36,18 @@
             <tbody>
             {% for distirb in distribs %}
             <tr>
-                <td>{{ distirb.distribution_date }}</td>
+                <td>{{ distirb.distribution_date }} c {{ distirb.start_time }} по {{ distirb.end_time }}</td>
                 <td>
-                    {% for member in distirb.party_members %}{{ member }}{% if not forloop.last  %}, {% endif %}{% endfor %}
-                {% if distrib.sympathizer_members|length > 0 %}<br>{% endif %}
-                {% for member in distirb.sympathizer_members %}{{ member }}{% if not forloop.last  %}, {% endif %}{% endfor %}
+                ({% with lenMem=distirb.party_members.all|length %}{{ distirb.sympathizer_members.all|length|add:lenMem }}{% endwith %})
+                    {% for member in distirb.party_members.all %}{{ member.member.full_name }}{% if not forloop.last  %}, {% endif %}{% endfor %}
+                {% if distirb.sympathizer_members.all|length > 0 %}<br>{% endif %}
+                {% for member in distirb.sympathizer_members.all %}соч. {{ member.member.name }}{% if not forloop.last  %}, {% endif %}{% endfor %}
                 </td>
                 <td>
 
+                    {% for number in distirb.numbers.all %}
+                        {{ number.number.newspaper.short_title }} {{ number.number.number }}: {{ number.quantity }} шт.{% if not forloop.last  %}<br>{% endif %}
+                    {% endfor %}
                 </td>
             </tr>
             {% endfor %}

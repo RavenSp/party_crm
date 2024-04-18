@@ -9,14 +9,16 @@ from .models import FactoryPoint, Sympathizer, NewspaperNumber
 from helpers.common import name_normalizer
 from person.models import Person
 from press.services import distributions
-
+from django.db import connection
 # Create your views here.
 
 @login_required()
 def my_distribution(request: HttpRequest):
     if request.method == 'GET':
         distribs = distributions.get_all({'distribution_date__gte': (datetime.date.today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d')})
-        return render(request, 'press/all_distribution.html', {'distribs': distribs})
+        result = render(request, 'press/all_distribution.html', {'distribs': distribs})
+        print(connection.queries)
+        return result
 
 
 @login_required()

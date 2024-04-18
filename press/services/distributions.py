@@ -2,7 +2,14 @@ from press.models import Distribution, DistributionPartyMembers, DistributionSym
 
 
 def get_all(filter_by):
-    distrib_list = Distribution.objects.filter(**filter_by).all()
+    distrib_list = Distribution.objects.filter(**filter_by).prefetch_related('numbers') \
+        .prefetch_related('numbers__number') \
+        .prefetch_related('numbers__number__newspaper')\
+        .prefetch_related('party_members') \
+        .prefetch_related('party_members__member') \
+        .prefetch_related('sympathizer_members') \
+        .prefetch_related('sympathizer_members__member') \
+        .all()
     if len(distrib_list) == 0:
         return []
-    return [x.__dict__ for x in distrib_list]
+    return distrib_list

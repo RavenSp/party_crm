@@ -9,6 +9,8 @@ def get_all(filter_by):
         .prefetch_related('party_members__member') \
         .prefetch_related('sympathizer_members') \
         .prefetch_related('sympathizer_members__member') \
+        .select_related('factory')\
+        .prefetch_related('factory__town')\
         .all()
     if len(distrib_list) == 0:
         return []

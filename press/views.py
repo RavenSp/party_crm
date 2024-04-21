@@ -5,12 +5,13 @@ from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from .forms import DistributionForm
-from .models import FactoryPoint, Sympathizer, NewspaperNumber
+from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbersOnDistribution, DistributionPartyMembers, DistributionSympathizerMember
 from helpers.common import name_normalizer
 from person.models import Person
 from press.services import distributions
 from django.db import connection
 # Create your views here.
+
 
 @login_required()
 def my_distribution(request: HttpRequest):
@@ -46,21 +47,47 @@ def new_distrib(request: HttpRequest):
         sympathizers = request.POST.getlist('sympathizer-members', [])
         newspapers = request.POST.getlist('newspaper', [])
         newspapers_quantity = request.POST.getlist('newspaper-quantity', [])
-        error_list = []
 
         if len(party_members) + len(sympathizers) == 0:
-            error_list.append('Должен быть хотя бы один раздающий!')
+            form.add_error(None, 'Должен быть хотя бы один раздающий!')
 
         if len(newspapers) == 0 or len(newspapers_quantity) == 0:
-            error_list.append('Должна быть роздана хотя бы 1 газета')
+            form.add_error(None, 'Должна быть роздана хотя бы 1 газета')
 
         if len(newspapers) != len(newspapers_quantity):
-            error_list.append('Некорректно введены данные о газетах!')
+            form.add_error(None, 'Некорректно введены данные о газетах!')
 
         if form.is_valid():
-            pass
+            n_distrib = form.save(commit=False)
+            n_distrib.author = request.user
+            n_distrib.save()
+
+            for newspaper in zip(newspapers, newspapers_quantity):
+                n_newspaper = NewspaperNumbersOnDistribution(
+                    number_id=newspaper[0],
+                    distribution=n_distrib,
+                    quantity=newspaper[1]
+                )
+                n_newspaper.save()
+
+            for p_member in party_members:
+                n_party_member = DistributionPartyMembers(
+                    distribution=n_distrib,
+                    member_id=p_member
+                )
+                n_party_member.save()
+
+            # Надо написать обработку сочутвтующих. Находим ID существующих, если таковых нет - создаем. Потом
+            # присваиваем ID к модели
+            sympathizers_ids = Sympathizer.objects.filter(pk__in=s)
+            # for sympathizer in sympathizers:
+            #     n_sympathizer = DistributionSympathizerMember(
+            #
+            #     )
+
         else:
-            form.errors
+            print(form.errors)
+
 
 
 @login_required()
@@ -79,8 +106,6 @@ def new_party_member_distrib(request: HttpRequest):
 @login_required()
 def new_sympathizer_distrib(request: HttpRequest):
     already_selected = request.POST.getlist('sympathizer-members')
-    print(already_selected)
-    print([name_normalizer(x) for x in already_selected])
     sympathizers = Sympathizer.objects.order_by('name').all()
     if len([x for x in already_selected if x != '']) > 0:
         sympathizers = [x for x in sympathizers if

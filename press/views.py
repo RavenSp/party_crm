@@ -59,7 +59,7 @@ def new_distrib(request: HttpRequest):
 
         if form.is_valid():
             n_distrib = form.save(commit=False)
-            n_distrib.author = request.user
+            n_distrib.autor_id = request.user.pk
             n_distrib.save()
 
             for newspaper in zip(newspapers, newspapers_quantity):
@@ -79,7 +79,10 @@ def new_distrib(request: HttpRequest):
 
             # Надо написать обработку сочутвтующих. Находим ID существующих, если таковых нет - создаем. Потом
             # присваиваем ID к модели
-            sympathizers_ids = Sympathizer.objects.filter(pk__in=s)
+            sympathizers_ids = [x for x in Sympathizer.objects.all() if x.normalize_name in [name_normalizer(x) for x in sympathizers]]
+            print(sympathizers_ids)
+            print(sympathizers)
+
             # for sympathizer in sympathizers:
             #     n_sympathizer = DistributionSympathizerMember(
             #

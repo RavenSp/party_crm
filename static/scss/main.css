@@ -1,4 +1,21 @@
 @charset "UTF-8";
+dialog::backdrop {
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -o-filter: blur(2px);
+  -ms-filter: blur(2px);
+  filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+dialog {
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: 15px;
+  border: none;
+  min-width: 70%;
+}
+
 .login-page {
   max-width: 600px;
   min-width: 300px;

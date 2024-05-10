@@ -1,0 +1,23 @@
+dialog::backdrop {
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -o-filter: blur(2px);
+  -ms-filter: blur(2px);
+  filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+dialog {
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: 15px;
+  border: 2px solid lightgray;
+  min-width: 70%;
+  min-height: 70%;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

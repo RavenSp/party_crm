@@ -19,26 +19,21 @@
         </span>
         </template>
     </div>
-    {% if party_members|length > 0 %}
-    <div class="row mb-2">
-        <div class="col-8">
-            <select class="form-select"
-                name="select-party-members"
-                id="select-party-member">
-                    {% for member in party_members %}
-                        <option value="{{ member.pk }}">{{ member.last_name }} {{ member.first_name }}</option>
-                    {% endfor %}
-            </select>
-        </div>
-        <div class="col-3">
-            <button class="btn btn-sm btn-secondary" 
-            hx-post="{% url 'press:hx-add-party-member' %}" 
-            hx-include="[name='select-party-members']"
-            hx-target="#party_member_field"
-            >
-                Добавить
-            </button>
-        </div>
+
+    <div class="mb-2">
+        <button class="btn btn-secondary" onclick="document.getElementById('dialog-members').showModal();">Добавить раздающих</button>
+        <dialog id="dialog-members" class="choiceModal">
+            <div class="dialog-header">
+                <h5 class="modal-title">Добавление раздающих</h5>
+                <button type="button" class="btn-close" aria-label="Close"  onclick="document.getElementById('dialog-members').close()"></button>
+            </div>
+            <div class="dialog-body m-3">
+                <input type="text" class="form-control" placeholder="Поиск" />
+            </div>
+            <div class="choice-list">
+                {% for %}
+            </div>
+              
+        </dialog>
     </div>
-    {% endif %}
 </div>

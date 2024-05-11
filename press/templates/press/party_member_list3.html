@@ -1,25 +1,26 @@
 <div class="mb-2" id="party_member_field" x-data="
     {
-        partyMembers: {},
-        toggleMember() {
-            
+        partyMembers: [],
+        toggleMember(e) {
+            if (e.checked) {
+                this.partyMembers.push({name: e.dataset.fullName, id: e.value});
+                console.log(this.partyMembers);
+            } else {
+                this.partyMembers.splice(this.partyMembers.indexOf({name: e.dataset.fullName, id: e.value}), 1);
+            }
         }
 
     }
 ">
-    <label for="party-members" class="form-label">Участники-члены партии: {{ select_members|length }} </label>
+    <label for="party-members" class="form-label" x-text="'Участники-члены партии: ' + Object.keys(partyMembers).length"></label>
     <div class="mb-2 d-flex flex-row flex-wrap">
-        <template x-for="ch in partyMembers" :key="ch.id">
+        <template x-for="ch in partyMembers" :key="ch.id+'ext'">
             <span
                 class="badge d-flex align-items-center p-1 pe-2 text-primary-emphasis bg-primary-subtle border border-primary-subtle m-1"
-                x-text="ch.fullname">
+                x-text="ch.name">
                 <span class="vr mx-2"></span>
                 <span @click="">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x"
-                        viewBox="0 0 16 16">
-                        <path
-                            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
-                    </svg>
+                    X
                 </span>
             </span>
         </template>
@@ -35,9 +36,20 @@
                     onclick="document.getElementById('dialog-members').close()"></button>
             </div>
             <div class="dialog-body m-3">
-                <div class="mb-2">
-                    <template x-for="memb in ">
-                      
+                <div class="mb-2 d-flex flex-row flex-wrap">
+                    <template x-for="memb in partyMembers" :key="memb.id">
+                      <span
+                class="badge d-flex align-items-center p-1 pe-2 text-primary-emphasis bg-primary-subtle border border-primary-subtle m-1"
+                x-text="memb.name">
+                <span class="vr mx-2"></span>
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                    </svg>
+                </span>
+            </span>
                     </template>
                 </div>
                 <div class="mb-2">
@@ -47,7 +59,7 @@
                     {% for member in party_members %}
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="{{ member.pk }}" id="partyMember{{ member.pk }}"
-                            data-full-name="{{ member.full_name }}" name="party_members" @change="">
+                            data-full-name="{{ member.full_name }}" name="party_members" @change="toggleMember($event.target)">
                         <label class="form-check-label" for="partyMember{{ member.pk }}">
                             {{ member.full_name }}
                         </label>

@@ -1,6 +1,6 @@
 import datetime
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
@@ -43,7 +43,7 @@ def new_distrib(request: HttpRequest):
         })
     elif request.method == 'POST':
         form = DistributionForm(request.POST)
-        party_members = request.session.get('select_party_members', [])
+        party_members = request.POST.getlist('party_members', [])
         sympathizers = request.POST.getlist('sympathizer-members', [])
         newspapers = request.POST.getlist('newspaper', [])
         newspapers_quantity = request.POST.getlist('newspaper-quantity', [])
@@ -87,6 +87,7 @@ def new_distrib(request: HttpRequest):
             #     n_sympathizer = DistributionSympathizerMember(
             #
             #     )
+            return redirect('press:all')
 
         else:
             print(form.errors)

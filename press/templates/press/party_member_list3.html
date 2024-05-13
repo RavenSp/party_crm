@@ -39,7 +39,7 @@
     </div>
 
     <div class="mb-2">
-        <button class="btn btn-secondary" onclick="document.getElementById('dialog-members').showModal();">Добавить
+        <button class="btn btn-secondary" @click.prevent="document.getElementById('dialog-members').showModal();">Добавить
             раздающих</button>
         <dialog id="dialog-members" class="choiceModal">
             <div class="dialog-header">

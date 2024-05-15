@@ -34,20 +34,21 @@
                         {% render_field form.end_time class='form-control mb-2' type='time' min='' %}
                     </div>
                 </div>
-                <div class="mb-2">
-                    Номера газет:
-                    <div id="newspapers-list">
-                        {% include 'press/newspapers_field.html' %}
-                    </div>
-                    <button 
-                    class="btn btn-secondary"
-                    hx-get="{% url 'press:hx-newspaper-field' %}"
-                    hx-target="#newspapers-list"
-                    hx-swap="beforeend"
-                    >Добавить номер
-                    </button>
-
-                </div>
+{#                <div class="mb-2">#}
+{#                    Номера газет:#}
+{#                    <div id="newspapers-list">#}
+{#                        {% include 'press/newspapers_field.html' %}#}
+{#                    </div>#}
+{#                    <button #}
+{#                    class="btn btn-secondary"#}
+{#                    hx-get="{% url 'press:hx-newspaper-field' %}"#}
+{#                    hx-target="#newspapers-list"#}
+{#                    hx-swap="beforeend"#}
+{#                    >Добавить номер#}
+{#                    </button>#}
+{##}
+{#                </div>#}
+                {% include 'press/newspapers_field2.html' %}
                 <div class="mb-2" id="party-member-list" hx-validate="true">
                     {% include 'press/party_member_list3.html' %}
                 </div>

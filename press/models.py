@@ -97,12 +97,21 @@ class NewspaperNumbersOnDistribution(models.Model):
     number = models.ForeignKey(to=NewspaperNumber, verbose_name='Номер газеты', related_name='distributions', on_delete=models.PROTECT)
     quantity = models.IntegerField(verbose_name='Количество')
 
+    def __str__(self):
+        return f"Номер в раздаче ID {self.pk}"
+
 
 class DistributionPartyMembers(models.Model):
     member = models.ForeignKey(to=Person, verbose_name='Раздающий', related_name='distributions', on_delete=models.PROTECT)
     distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='party_members', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"Член партии на раздаче ID {self.pk}"
+
 
 class DistributionSympathizerMember(models.Model):
     member = models.ForeignKey(to=Sympathizer, verbose_name='Раздающий сочувствующий', related_name='distributions', on_delete=models.PROTECT)
     distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='sympathizer_members', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Сочувствующий на раздаче ID {self.pk}"

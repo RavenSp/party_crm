@@ -5,7 +5,7 @@ from .models import Newspaper, NewspaperNumber, Town, FactoryPoint, Distribution
 
 class NewspaperNumbersOnDistributionInline(admin.StackedInline):
     model = NewspaperNumbersOnDistribution
-    extra = 1
+    extra = 0
     can_delete = True
     verbose_name = 'Номер газеты'
     verbose_name_plural = 'Номера газет'
@@ -13,7 +13,7 @@ class NewspaperNumbersOnDistributionInline(admin.StackedInline):
 
 class DistributionPartyMembersInline(admin.StackedInline):
     model = DistributionPartyMembers
-    extra = 1
+    extra = 0
     can_delete = True
     verbose_name = 'Член партии'
     verbose_name_plural = 'Члены партии'
@@ -21,7 +21,7 @@ class DistributionPartyMembersInline(admin.StackedInline):
 
 class DistributionSympathizerMemberInline(admin.StackedInline):
     model = DistributionSympathizerMember
-    extra = 1
+    extra = 0
     can_delete = True
     verbose_name = 'Сочувствующий'
     verbose_name_plural = 'Сочувствующие'

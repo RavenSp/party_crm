@@ -9,7 +9,7 @@
 {% block main_content %}
     <div class="login-page">
         <main class="form-signin w-100 m-auto text-center">
-            <form hx-post="{% url 'person:hx-login' %}" hx-target="#body" hx-swap="">
+            <form hx-post="{% url 'person:hx-login' %}" hx-target="body">
                 <h1 class="h2 mb-3 fw-normal">Вход в партийную CRM</h1>
                 {% if login_error %}
                     <div class="text-start">

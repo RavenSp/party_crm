@@ -5,18 +5,22 @@ from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from .forms import DistributionForm
-from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbersOnDistribution, DistributionPartyMembers, DistributionSympathizerMember
+from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbersOnDistribution, \
+    DistributionPartyMembers, DistributionSympathizerMember
 from helpers.common import name_normalizer
 from person.models import Person
 from press.services import distributions
 from django.db import connection
+
+
 # Create your views here.
 
 
 @login_required()
 def my_distribution(request: HttpRequest):
     if request.method == 'GET':
-        distribs = distributions.get_all({'distribution_date__gte': (datetime.date.today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d')})
+        distribs = distributions.get_all(
+            {'distribution_date__gte': (datetime.date.today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d')})
         result = render(request, 'press/all_distribution.html', {'distribs': distribs})
         print(connection.queries)
         return result
@@ -79,7 +83,8 @@ def new_distrib(request: HttpRequest):
 
             # Надо написать обработку сочутвтующих. Находим ID существующих, если таковых нет - создаем. Потом
             # присваиваем ID к модели
-            sympathizers_ids = [x for x in Sympathizer.objects.all() if x.normalize_name in [name_normalizer(x) for x in sympathizers]]
+            sympathizers_ids = [x for x in Sympathizer.objects.all() if
+                                x.normalize_name in [name_normalizer(x) for x in sympathizers]]
             print(sympathizers_ids)
             print(sympathizers)
 
@@ -91,7 +96,6 @@ def new_distrib(request: HttpRequest):
 
         else:
             print(form.errors)
-
 
 
 @login_required()

@@ -11,7 +11,7 @@ def get_all(filter_by):
         .prefetch_related('sympathizer_members__member') \
         .select_related('factory')\
         .prefetch_related('factory__town')\
-        .order_by('-distribution_date')\
+        .order_by('-distribution_date', '-start_time')\
         .all()
     if len(distrib_list) == 0:
         return []

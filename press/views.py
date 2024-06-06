@@ -35,7 +35,6 @@ def new_distrib(request: HttpRequest):
             'end_time': datetime.datetime.now().strftime("%H:%M"),
         })
 
-        request.session['select_party_members'] = []
         party_members = Person.objects.filter(party_member=True).order_by('-last_name').all()
         sympathizers = Sympathizer.objects.all()
         newspapers = NewspaperNumber.objects.select_related('newspaper').order_by('year').all()
@@ -43,7 +42,8 @@ def new_distrib(request: HttpRequest):
             'form': form,
             'party_members': party_members,
             'sympathizers': sympathizers,
-            'newspapers': newspapers
+            'newspapers': newspapers,
+            'datenow': datetime.date.today()
         })
     elif request.method == 'POST':
         form = DistributionForm(request.POST)
@@ -81,17 +81,22 @@ def new_distrib(request: HttpRequest):
                 )
                 n_party_member.save()
 
-            # Надо написать обработку сочутвтующих. Находим ID существующих, если таковых нет - создаем. Потом
+            # Надо написать обработку сочувствующих. Находим ID существующих, если таковых нет - создаем. Потом
             # присваиваем ID к модели
             sympathizers_ids = [x for x in Sympathizer.objects.all() if
                                 x.normalize_name in [name_normalizer(x) for x in sympathizers]]
-            print(sympathizers_ids)
-            print(sympathizers)
 
-            # for sympathizer in sympathizers:
-            #     n_sympathizer = DistributionSympathizerMember(
-            #
-            #     )
+            for new_sympathizer_name in [x for x in sympathizers if name_normalizer(x) not in [x.normalize_name for x in sympathizers_ids]]:
+                n_sympathizer = Sympathizer(name=new_sympathizer_name)
+                n_sympathizer.save()
+                sympathizers_ids.append(n_sympathizer)
+
+            for sympathizer in sympathizers_ids:
+                DistributionSympathizerMember(
+                    distribution=n_distrib,
+                    member=sympathizer
+                ).save()
+
             return redirect('press:all')
 
         else:

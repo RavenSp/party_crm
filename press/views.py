@@ -1,18 +1,17 @@
 import datetime
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from .forms import DistributionForm
 from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbersOnDistribution, \
-    DistributionPartyMembers, DistributionSympathizerMember
+    DistributionPartyMembers, DistributionSympathizerMember, Distribution
 from helpers.common import name_normalizer
 from person.models import Person
 from press.services import distributions
 from django.db import connection
-
-
+from render_block import render_block_to_string
 # Create your views here.
 
 
@@ -81,8 +80,6 @@ def new_distrib(request: HttpRequest):
                 )
                 n_party_member.save()
 
-            # Надо написать обработку сочувствующих. Находим ID существующих, если таковых нет - создаем. Потом
-            # присваиваем ID к модели
             sympathizers_ids = [x for x in Sympathizer.objects.all() if
                                 x.normalize_name in [name_normalizer(x) for x in sympathizers]]
 
@@ -170,3 +167,13 @@ def hx_add_party_member(request: HttpRequest):
 def hx_newspaper(request: HttpRequest):
     newspapers = NewspaperNumber.objects.select_related('newspaper').order_by('year').all()
     return render(request, 'press/newspapers_field.html', {'newspapers': newspapers})
+
+
+@login_required()
+def hx_distrib(request: HttpRequest, pk: int):
+    distrib = get_object_or_404(Distribution, pk=pk)
+    distrib.delete()
+    distribs = distributions.get_all(
+        {'distribution_date__gte': (datetime.date.today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d')})
+    result = render_block_to_string('press/all_distribution.html', 'table-distrib', {'distribs': distribs}, request)
+    return HttpResponse(result)

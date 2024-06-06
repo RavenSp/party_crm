@@ -31,6 +31,7 @@
                 {% include 'press/filter-my-distrib.html' %}
             </div>
         </div>
+        {% block table-distrib %}
         <div id="table-distrib" class="mt-3">
             <div class="accordion" id="accordionPanelsDistrib mb-5">
                 {% for distirb in distribs %}
@@ -87,11 +88,40 @@
                                 <b>Примечание:</b><br>
                                 {{ distirb.description }}
                             {% endif %}
+                        <div class="mb-1">
+                        <i class="text-secondary">Автор записи:  {{ distirb.autor.full_name }}</i>
+                        </div>
+                        {% if distirb.autor == user %}
+                            <hr>
+                            <dialog id="dialog-delete-{{ distirb.pk }}">
+                            {# Прописать стили для  #}
+                                <div class="dialog-header">
+                                    <h5 class="modal-title">Удаление раздачи {{ distirb.distribution_date }} / {{ distirb.factory }}</h5>
+                                    <button type="button" class="btn-close" aria-label="Close"
+                                        onclick="document.getElementById('dialog-delete-{{ distirb.pk }}').close()"></button>
+                                </div>
+                                <div class="dialog-body m-3">
+                                    <h6>Вы уверены?</h6>
+                                    <hr>
+                                    <button class="btn btn-danger"
+                                            hx-delete="{% url 'press:hx-distrib' pk=distirb.pk %}"
+                                            hx-target="#table-distrib"
+                                        >Да</button>
+                                    <button class="btn btn-secondary"
+                                            onclick="document.getElementById('dialog-delete-{{ distirb.pk }}').close()"
+                                    >Отмена</button>
+                                </div>
+                            </dialog>
+                            <button class="btn btn-danger"
+                                    onclick="document.getElementById('dialog-delete-{{ distirb.pk }}').showModal();"
+                            >Удалить</button>
+                        {% endif %}
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
+        {% endblock %}
     </div>
 {% endblock %}

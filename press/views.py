@@ -182,5 +182,5 @@ def hx_distrib(request: HttpRequest, pk: int):
 @login_required()
 def report_generate(request: HttpRequest):
     file_report = report.generate_report()
-    return HttpResponse(file_report, content_type='application/json')
+    return FileResponse(file_report, filename='Отчёт о раздачах.xlsx', as_attachment=False)
 

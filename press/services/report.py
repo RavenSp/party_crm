@@ -3,6 +3,7 @@ from press.models import Distribution, NewspaperNumbersOnDistribution
 from django.db.models import Count
 import xlsxwriter
 from io import BytesIO
+from itertools import chain
 
 from django.core.serializers import serialize
 
@@ -62,14 +63,22 @@ def generate_report():
     ws1.set_row(1, 20)
     for index, cell in enumerate(['Дата', 'Предприятие', 'Газета', 'Количество', 'Распространяли']):
         ws1.write(1, index, cell, head_style)
-        for index, distrib in enumerate(all_distribs):
-            current_line = index+2
-            ws1.write_datetime(1, current_line, distrib.distribution_date, simple_style)
-            ws1.write_string(2, current_line, distrib.factory.title)
-            if distrib.numbers.count() > 1:
-                pass
-            else:
-                ws1.write_string(3, current_line, distrib.numbers.all()[0].number.newspaper.title, simple_style)
+    for index, distrib in enumerate(all_distribs):
+        current_line = index+2
+        ws1.write_string(current_line, 0, distrib.distribution_date.strftime("%d.%m.%Y"), simple_style)
+        ws1.write_string(current_line, 1, distrib.factory.title, simple_style)
+        print(distrib.numbers.all())
+        if distrib.numbers.count() > 1:
+            pass
+        else:
+            nmb = distrib.numbers.all()[0]
+            ws1.write_string(current_line, 2, 
+                             f"{nmb.number.newspaper.title} №{nmb.number.number}", simple_style)
+            ws1.write_number(current_line, 3, nmb.quantity ,simple_style)
+        ws1.write_string(current_line, 4, ', '.join(
+            chain([x.member.full_name for x in distrib.party_members.all()], 
+                  [f'соч. {x.member.name}' for x in distrib.sympathizer_members.all()])
+            ) ,simple_style)
     
     ws2 = xls_file.add_worksheet('Распространители')
     ws2.set_column('A:A', 28.05)

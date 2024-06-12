@@ -1,7 +1,7 @@
 import datetime
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, FileResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from .forms import DistributionForm
@@ -9,7 +9,7 @@ from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbers
     DistributionPartyMembers, DistributionSympathizerMember, Distribution
 from helpers.common import name_normalizer
 from person.models import Person
-from press.services import distributions
+from press.services import distributions, report
 from django.db import connection
 from render_block import render_block_to_string
 # Create your views here.
@@ -177,3 +177,10 @@ def hx_distrib(request: HttpRequest, pk: int):
         {'distribution_date__gte': (datetime.date.today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d')})
     result = render_block_to_string('press/all_distribution.html', 'table-distrib', {'distribs': distribs}, request)
     return HttpResponse(result)
+
+
+@login_required()
+def report_generate(request: HttpRequest):
+    file_report = report.generate_report()
+    return HttpResponse(file_report, content_type='application/json')
+

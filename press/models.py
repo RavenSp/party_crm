@@ -80,6 +80,7 @@ class Distribution(models.Model):
     start_time = models.TimeField(verbose_name='Начало раздачи')
     end_time = models.TimeField(verbose_name='Окончание раздачи')
     description = models.TextField(blank=True, null=True, verbose_name='Примечание')
+    numbers_on_distribution = models.ManyToManyField(NewspaperNumber, through='NewspaperNumbersOnDistribution')
 
     class Meta:
         verbose_name = 'Раздача'

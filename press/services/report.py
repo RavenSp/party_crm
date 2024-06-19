@@ -1,5 +1,6 @@
 import datetime
-from press.models import Distribution, NewspaperNumbersOnDistribution
+from press.models import Distribution, NewspaperNumbersOnDistribution, Sympathizer, FactoryPoint
+from person.models import Person
 from django.db.models import Count
 import xlsxwriter
 from io import BytesIO
@@ -15,10 +16,47 @@ def generate_report():
         distribution_date__gte=report_month.replace(month=1, day=1)
     ).filter(
         distribution_date__lt=(report_month.replace(month=report_month.month+1) if report_month.month < 12 else report_month.replace(year=report_month.year +1, month=1, day=1))
-    ).all()
+    ).order_by('distribution_date').all()
+
+    all_party_member = Person.objects.filter(party_member=True).filter(is_active=True).all()
+    all_sympathizers = Sympathizer.objects.all()
+
+    all_members = ([{'name': x.full_name, 'months': {y: 0 for y in range(1, 13)}} for x in all_party_member] +
+                   [{'name': f'соч. {x.name}', 'months': {y: 0 for y in range(1, 13)}} for x in all_sympathizers])
+
+    all_fabric = FactoryPoint.objects.order_by('-town__title', '-title').all()
+    factory_month = {x.pk: {y: 0 for y in range(1, 13)} for x in all_fabric}
 
 
-    # print(all_distribs.query)
+    for distrib in all_distribs:
+        count = sum([x.quantity for x in distrib.numbers.all()])
+        party_member_count = sum([1 for x in distrib.party_members.all()])
+        sympathier_count = sum([1 for x in distrib.sympathizer_members.all()])
+        m_count = party_member_count + sympathier_count
+        # TODO:Потом переделать распределение газет более правильно, чтобы бились цифры
+        # if count % m_count > 0:
+        #     if count % m_count == sympathier_count:
+        #         pass
+        #     elif count % m_count < sympathier_count:
+        #         pass
+        #     else:
+        #         pass
+        # else:
+        #     pass
+        for party in distrib.party_members.all():
+            for mbm in all_members:
+                if mbm['name'] == party.member.full_name:
+                    mbm['months'][distrib.distribution_date.month] += round(count / m_count)
+        for sympathier in distrib.sympathizer_members.all():
+            for mbm in all_members:
+                if mbm['name'] == f'соч. {sympathier.member.name}':
+                    mbm['months'][distrib.distribution_date.month] += round(count / m_count)
+
+        factory_month[distrib.factory.id][distrib.distribution_date.month] += count
+
+
+
+
 
     bytesFile = BytesIO()
 
@@ -99,6 +137,20 @@ def generate_report():
                 'Октябрь', 'Ноябрь', 'Декабрь', 'Итого:']
     for index, cell in enumerate(row_text):
         ws2.write(1, index, cell, head_style)
+    print(all_members)
+    for index, mbm in enumerate(all_members):
+        current_line = index+2
+        ws2.write_string(current_line, 0, mbm['name'], simple_style)
+        for i in mbm['months']:
+            if mbm['months'][i] > 0:
+                ws2.write_number(current_line, i, mbm['months'][i], simple_style)
+            else:
+                ws2.write_string(current_line, i, '', simple_style)
+        ws2.write_formula(current_line, 13, f'=SUM(B{current_line+1}:M{current_line+1})', head_style, '')
+    ws2.write_string(current_line+1, 0, 'ИТОГО:', head_style)
+    for index, i in enumerate('BCDEFGHIJKLMN'):
+        ws2.write_formula(current_line+1, index+1, f'SUM({i}3:{i}{current_line+1})', head_style, '')
+
 
 
     ws3 = xls_file.add_worksheet('Предприятия')
@@ -108,12 +160,26 @@ def generate_report():
     ws3.merge_range('A1:O1', f'Предприятия Московская организация {datetime.date.today().year} год.', title_style)
     ws3.set_row(0, 20)
     ws3.set_row(1, 20)
-    row_text = ['Предприятие', 'Город/Населённый пункт', 'Январь', 'Февраль', 'Март', 'Апрель',
+    row_text = ['Предприятие', 'Город', 'Январь', 'Февраль', 'Март', 'Апрель',
                 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь',
                 'Октябрь', 'Ноябрь', 'Декабрь', 'Итого:']
     for index, cell in enumerate(row_text):
         ws3.write(1, index, cell, head_style)
 
+    for index, fab in enumerate(all_fabric):
+        current_line = index+2
+        ws3.write_string(current_line, 0, fab.title, simple_style)
+        ws3.write_string(current_line, 1, fab.town.title, simple_style)
+        for ind, i in enumerate('CDEFGHIJKLMN'):
+            if factory_month[fab.id][ind+1] > 0:
+                ws3.write_number(current_line, ind+2, factory_month[fab.id][ind+1], simple_style)
+            else:
+                ws3.write_string(current_line, ind+2, '', simple_style)
+        ws3.write_formula(current_line, 14, f'=SUM(C{current_line+1}:N{current_line+1})', head_style, '')
+    ws3.write_string(current_line+1,1,'Итого', head_style)
+
+    for ind, i in enumerate('CDEFGHIJKLMNO'):
+        ws3.write_formula(current_line+1, ind+2, f'=SUM({i}3:{i}{current_line+1})', head_style, '')
     xls_file.close()
     bytesFile.seek(0)
 

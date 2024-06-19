@@ -76,7 +76,7 @@ class FactoryPoint(models.Model):
 class Distribution(models.Model):
     distribution_date = models.DateField(verbose_name='Дата раздачи')
     autor = models.ForeignKey(to=Person, verbose_name='Автор записи', on_delete=models.PROTECT)
-    factory = models.ForeignKey(to=FactoryPoint, verbose_name='Предприятие', on_delete=models.PROTECT)
+    factory = models.ForeignKey(to=FactoryPoint, verbose_name='Предприятие', on_delete=models.PROTECT, related_name='distributions')
     start_time = models.TimeField(verbose_name='Начало раздачи')
     end_time = models.TimeField(verbose_name='Окончание раздачи')
     description = models.TextField(blank=True, null=True, verbose_name='Примечание')

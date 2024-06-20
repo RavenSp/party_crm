@@ -1,12 +1,11 @@
 import datetime
-from press.models import Distribution, NewspaperNumbersOnDistribution, Sympathizer, FactoryPoint
+from press.models import Distribution, Sympathizer, FactoryPoint
 from person.models import Person
-from django.db.models import Count
+
 import xlsxwriter
 from io import BytesIO
 from itertools import chain
 
-from django.core.serializers import serialize
 
 
 def generate_report():
@@ -33,24 +32,31 @@ def generate_report():
         party_member_count = sum([1 for x in distrib.party_members.all()])
         sympathier_count = sum([1 for x in distrib.sympathizer_members.all()])
         m_count = party_member_count + sympathier_count
-        # TODO:Потом переделать распределение газет более правильно, чтобы бились цифры
-        # if count % m_count > 0:
-        #     if count % m_count == sympathier_count:
-        #         pass
-        #     elif count % m_count < sympathier_count:
-        #         pass
-        #     else:
-        #         pass
-        # else:
-        #     pass
         for party in distrib.party_members.all():
             for mbm in all_members:
                 if mbm['name'] == party.member.full_name:
-                    mbm['months'][distrib.distribution_date.month] += round(count / m_count)
+                    mbm['months'][distrib.distribution_date.month] += count // m_count
         for sympathier in distrib.sympathizer_members.all():
             for mbm in all_members:
                 if mbm['name'] == f'соч. {sympathier.member.name}':
-                    mbm['months'][distrib.distribution_date.month] += round(count / m_count)
+                    mbm['months'][distrib.distribution_date.month] += count // m_count
+        if count % m_count > 0:
+            cnt = 0
+            if sympathier_count > 0:
+                while cnt < count % m_count:
+                    for mbm in [x for x in all_members if x['name'].startswith('соч. ')]:
+                        all_members[all_members.index(mbm)]['months'][distrib.distribution_date.month] += 1
+                        cnt += 1
+                        if cnt == count % m_count:
+                            break
+            else:
+                while cnt < count % m_count:
+                    for mbm in [x for x in all_members]:
+                        all_members[all_members.index(mbm)]['months'][distrib.distribution_date.month] += 1
+                        cnt += 1
+                        if cnt == count % m_count:
+                            break
+
 
         factory_month[distrib.factory.id][distrib.distribution_date.month] += count
 
@@ -98,7 +104,7 @@ def generate_report():
     ws1.set_column('B:B', 37.4)
     ws1.set_column('C:C', 33.3)
     ws1.set_column('D:D', 17.2)
-    ws1.set_column('E:E', 35)
+    ws1.set_column('E:E', 72)
     ws1.merge_range('A1:E1', f"Распространение прессы Московская организация {datetime.date.today().year} год.", title_style)
     ws1.set_row(0, 20)
     ws1.set_row(1, 20)

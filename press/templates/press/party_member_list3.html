@@ -1,0 +1,93 @@
+<div class="mb-2" id="party_member_field" x-data="
+    {
+        partyMembers: [],
+        search: '',
+        show_item(el) {
+          return this.search === '' || el.textContent.toLowerCase().includes(this.search.toLowerCase())
+        },
+        toggleMember(e) {
+            if (e.checked) {
+                this.partyMembers.push({name: e.dataset.fullName, id: e.value});
+                console.log(this.partyMembers);
+            } else {
+                this.partyMembers.splice(this.partyMembers.indexOf({name: e.dataset.fullName, id: e.value}), 1);
+            }
+        },
+        unCheck(index) {
+            document.getElementById('partyMember' + this.partyMembers[index].id).checked = false;
+            this.partyMembers.splice(index, 1);
+        }
+
+    }
+">
+    <label for="party-members" class="form-label"
+        x-text="'Участники-члены партии: ' + Object.keys(partyMembers).length"></label>
+    <div class="mb-2 d-flex flex-row flex-wrap">
+        <template x-for="(ch, index) in partyMembers" :key="ch.id+'ext'">
+            <span
+                class="badge d-flex align-items-center p-1 pe-2 text-primary-emphasis bg-primary-subtle border border-primary-subtle m-1"
+                >
+                <span x-text="ch.name"></span>
+                <span class="vr mx-2"></span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-x" viewBox="0 0 16 16" @click="unCheck(index);">
+                    <path
+                        d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                </svg>
+            </span>
+        </template>
+    </div>
+
+    <div class="mb-2">
+        <button class="btn btn-secondary" @click.prevent="document.getElementById('dialog-members').showModal();">Добавить
+            раздающих</button>
+        <dialog id="dialog-members" class="choiceModal">
+            <div class="dialog-header">
+                <h5 class="modal-title">Добавление раздающих</h5>
+                <button type="button" class="btn-close" aria-label="Close"
+                    onclick="document.getElementById('dialog-members').close()"></button>
+            </div>
+            <div class="dialog-body m-3">
+                <div class="mb-2 d-flex flex-row flex-wrap">
+                    <template x-for="(memb, index) in partyMembers" :key="memb.id">
+                        <span
+                            class="badge d-flex align-items-center p-1 pe-2 text-primary-emphasis bg-primary-subtle border border-primary-subtle m-1"
+                            >
+                            <span x-text="memb.name"></span>
+                            <span class="vr mx-2"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-x" viewBox="0 0 16 16" @click="unCheck(index);">
+                                <path
+                                    d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                            </svg>
+                        </span>
+                    </template>
+                </div>
+                <div class="mb-2">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Поиск" x-model="search"/>
+                        <span class="input-group-append">
+                        <button class="btn btn-white border-start-0 border" type="button" @click="search = '';">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                            </svg>
+                        </button>
+                    </div>
+                </span>
+                </div>
+                <div class="choice-list">
+                    {% for member in party_members %}
+                    <div class="form-check" x-show="show_item($el)">
+                        <input class="form-check-input" type="checkbox" value="{{ member.pk }}"
+                            id="partyMember{{ member.pk }}" data-full-name="{{ member.full_name }}" name="party_members"
+                            @change="toggleMember($event.target)">
+                        <label class="form-check-label" for="partyMember{{ member.pk }}">
+                            {{ member.full_name }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </dialog>
+    </div>
+</div>

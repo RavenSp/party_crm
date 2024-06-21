@@ -1,0 +1,28 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg fixed-top bg-body-tertiary d-none d-md-block">
+    <div class="container-fluid">
+        <img src="{% static 'img/main_ico.png' %}" alt="РПР" width="30" height="24" class="rounded">
+        <a class="navbar-brand" href="#">Рабочая партия России</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse mx-3" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ml-2">
+                <li class="nav-item">
+                    <a class="nav-link {% if '/press' in request.path %}active{% endif %}" href="{% url 'press:all' %}">Газета</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if '/profile' in request.path %}active{% endif %}" href="/profile/">Профиль</a>
+                </li>
+{#                 <li class="nav-item">#}
+{#                    <a class="nav-link {% if '/##' in request.path %}active{% endif %}" href="#">Статистика</a>#}
+{#                </li>#}
+                <li class="nav-item">
+                    <a class="nav-link {% if '/###' in request.path %}active{% endif %}" href="#" data-bs-toggle="offcanvas" data-bs-target="#leftMenu" aria-controls="leftMenu">Доп. меню</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

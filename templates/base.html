@@ -1,0 +1,82 @@
+{% load static %}
+<!doctype html>
+<html lang="ru" data-bs-theme="auto">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ meta_descripiton }}">
+    <title>{% if title %}{{ title }} | {% endif %}CRM Рабочй партии России</title>
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <link href="{% static "css/main.css" %}" rel="stylesheet">
+    {% block styles %}{% endblock %}
+
+    <script src="{% static 'js/htmx.min.js' %}"></script>
+     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/alpinejs3.13.7.js' %}" defer></script>
+
+</head>
+
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' id="body">
+    {% if request.user.is_authenticated %}
+    {% include 'top_menu.html' %}
+    {% endif %}
+    <main class="container pt-3 mt-md-5" id="main-container">
+        {% block main_content %}{% endblock %}
+    </main>
+    {% if request.user.is_authenticated %}
+        <!-- Дополнительное меню -->
+        {% include 'left_menu.html' %}
+        <!-- Конец дополнительного меню -->
+        <!-- МОБИЛЬНОЕ МЕНЮ -->
+        {% include "mobile_menu.html" %}
+        <!-- КОНЕЦ МОБИЛЬНОГО МЕНЮ -->
+    {% endif %}
+    <script>
+        function alpineSelect() {
+            return {
+                isOpen: false,
+                options: [],
+                filteredOptions: [],
+                init: function () {
+                    this.options = [...this.$refs.select.options].map(o => ({text: o.text, value: o.value}))
+                    this.filteredOptions = [...this.options]
+                },
+                search: function(evt) {
+                    const searchKeyword = evt.target.value
+                    this.filteredOptions = this.options.filter(o => o.text.toLowerCase().includes(searchKeyword.toLowerCase()))
+                },
+                selectOption(option) {
+                    this.$refs.select.value = option.value
+                    this.$refs.input.value = option.text
+                    this.isOpen = false  // <-- set to false after Option is selected
+                },
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu-bottom').hidden = !document.getElementById('mobile-menu-bottom').hidden;
+        }
+    </script>
+
+    <script>
+        const toastTrigger = document.getElementById('liveToastBtn')
+        const toastLiveExample = document.getElementById('liveToast')
+
+        if (toastTrigger) {
+            const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+            toastTrigger.addEventListener('click', () => {
+                toastBootstrap.show()
+            })
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

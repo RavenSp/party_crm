@@ -1,7 +1,7 @@
 <nav class="navbar fixed-bottom bg-dark-subtle mobile-bottom-menu d-md-none" id="mobile-menu-bottom">
     <div class="container-fluid d-flex justify-content-around flex-nowrap">
         <!-- Элемент меню (не более 5 штук)   -->
-        <a href="{% url 'press:all' %}" class="menu-item {% if 'press/' in request.path   %}active{% endif %}">
+        <a href="{% url 'press:all' %}" class="menu-item {% if request.path == '/' %}active{% endif %}">
             <div class="d-flex flex-column justify-content-center align-items-center px-3">
               <!-- Иконка SVG  -->
               <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-newspaper" viewBox="0 0 16 16">

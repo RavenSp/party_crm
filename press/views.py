@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from .forms import DistributionForm
 from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbersOnDistribution, \
-    DistributionPartyMembers, DistributionSympathizerMember, Distribution
+    DistributionPartyMembers, DistributionSympathizerMember, Distribution, Town
 from helpers.common import name_normalizer
 from person.models import Person
 from press.services import distributions, report
@@ -185,3 +185,24 @@ def report_generate(request: HttpRequest):
     file_report = report.generate_report()
     return FileResponse(file_report, filename='Отчёт о раздачах.xlsx', as_attachment=False)
 
+
+@login_required()
+def towns(request: HttpRequest):
+    if request.method == 'GET':
+        towns = Town.objects.prefetch_related('factories').order_by('title').all()
+        return render(request, 'press/towns.html', {'towns': towns})
+    if request.method == 'POST':
+        town_name = request.POST.get('town-name', None)
+        if town_name is None:
+            return HttpResponse('', status='204')
+        town = Town(title=town_name)
+        town.save()
+        return HttpResponse('', status='204')
+
+
+@login_required()
+def towns_delete(request: HttpRequest, pk: int):
+    if request.method == 'DELETE':
+        town = Town.objects.get(pk=pk)
+        town.delete()
+        return HttpResponse(request, '', status='200')

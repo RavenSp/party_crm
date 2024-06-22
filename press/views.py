@@ -33,7 +33,7 @@ def new_distrib(request: HttpRequest):
             'start_time': (datetime.datetime.now() - datetime.timedelta(minutes=60)).strftime("%H:%M"),
             'end_time': datetime.datetime.now().strftime("%H:%M"),
         })
-
+        factoryes = FactoryPoint.objects.select_related('town').order_by('-town__title', 'title').all()
         party_members = Person.objects.filter(party_member=True).order_by('-last_name').all()
         sympathizers = Sympathizer.objects.all()
         newspapers = NewspaperNumber.objects.select_related('newspaper').order_by('year').all()
@@ -42,6 +42,7 @@ def new_distrib(request: HttpRequest):
             'party_members': party_members,
             'sympathizers': sympathizers,
             'newspapers': newspapers,
+            'factoryes': factoryes,
             'datenow': datetime.date.today()
         })
     elif request.method == 'POST':

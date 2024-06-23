@@ -195,6 +195,8 @@ def towns(request: HttpRequest):
         town_name = request.POST.get('town-name', None)
         if town_name is None:
             return HttpResponse('', status='204')
+        if Town.objects.filter(name=town_name).exists():
+            return HttpResponse('', status='204')
         town = Town(title=town_name)
         town.save()
         return HttpResponse('', status='204')

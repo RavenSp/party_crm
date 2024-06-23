@@ -1,5 +1,5 @@
 import datetime
-
+from django_htmx.http import retarget
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, HttpResponse, FileResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
@@ -193,10 +193,10 @@ def towns(request: HttpRequest):
         return render(request, 'press/towns.html', {'towns': towns})
     if request.method == 'POST':
         town_name = request.POST.get('town-name', None)
-        if town_name is None:
-            return HttpResponse('', status='204')
-        if Town.objects.filter(name=town_name).exists():
-            return HttpResponse('', status='204')
+        if town_name is None or town_name == '':
+            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя не должно быть пустым!'}), '#modal-alert')
+        if Town.objects.filter(title=town_name).exists():
+            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя должно быть уникальным!'}), '#modal-alert')
         town = Town(title=town_name)
         town.save()
         return HttpResponse('', status='204')

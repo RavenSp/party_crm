@@ -24,11 +24,11 @@
                     onclick="document.getElementById('dialog-towns').close()"></button>
             </div>
             <div class="dialog-body m-3">
+                <div class="mb-2" id="modal-alert"></div>
                 <form hx-post="{% url 'press:towns' %}">
                     <div class="mb-3">
                         <label for="new-town"></label>
                         <input type="text" id="new-town" class="form-control" autocomplete="off" name="town-name">
-                        <span class="text-secondary">Имя города должно быть уникальным</span>
                     </div>
                     <div class="d-grid gap-2 d-md-block">
                         <button class="btn btn-primary" type="submit">Сохранить</button>

@@ -199,7 +199,10 @@ def towns(request: HttpRequest):
             return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя должно быть уникальным!'}), '#modal-alert')
         town = Town(title=town_name)
         town.save()
-        return HttpResponse('', status='204')
+        towns = Town.objects.prefetch_related('factories').order_by('title').all()
+        html = render_block_to_string('press/towns.html', 'towns_list', {'towns': towns}, request)
+
+        return HttpResponse(html, status='201')
 
 
 @login_required()

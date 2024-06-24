@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, HttpResponse, FileResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-from .forms import DistributionForm
+from .forms import DistributionForm, FabricForm
 from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbersOnDistribution, \
     DistributionPartyMembers, DistributionSympathizerMember, Distribution, Town
 from helpers.common import name_normalizer
@@ -12,6 +12,8 @@ from person.models import Person
 from press.services import distributions, report
 from django.db import connection
 from render_block import render_block_to_string
+
+
 # Create your views here.
 
 
@@ -84,7 +86,8 @@ def new_distrib(request: HttpRequest):
             sympathizers_ids = [x for x in Sympathizer.objects.all() if
                                 x.normalize_name in [name_normalizer(x) for x in sympathizers]]
 
-            for new_sympathizer_name in [x for x in sympathizers if name_normalizer(x) not in [x.normalize_name for x in sympathizers_ids]]:
+            for new_sympathizer_name in [x for x in sympathizers if
+                                         name_normalizer(x) not in [x.normalize_name for x in sympathizers_ids]]:
                 n_sympathizer = Sympathizer(name=new_sympathizer_name)
                 n_sympathizer.save()
                 sympathizers_ids.append(n_sympathizer)
@@ -194,9 +197,11 @@ def towns(request: HttpRequest):
     if request.method == 'POST':
         town_name = request.POST.get('town-name', None)
         if town_name is None or town_name == '':
-            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя не должно быть пустым!'}), '#modal-alert')
+            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя не должно быть пустым!'}),
+                            '#modal-alert')
         if Town.objects.filter(title=town_name).exists():
-            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя должно быть уникальным!'}), '#modal-alert')
+            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя должно быть уникальным!'}),
+                            '#modal-alert')
         town = Town(title=town_name)
         town.save()
         towns = Town.objects.prefetch_related('factories').order_by('title').all()
@@ -210,4 +215,24 @@ def towns_delete(request: HttpRequest, pk: int):
     if request.method == 'DELETE':
         town = Town.objects.get(pk=pk)
         town.delete()
+        return HttpResponse(request, '', status='200')
+
+
+@login_required()
+def factory(request: HttpRequest):
+    if request.method == 'GET':
+        fabrics = FactoryPoint.objects.prefetch_related('town').prefetch_related('distributions').order_by('town__title', 'title').all()
+        form = FabricForm()
+        return render(request, 'press/factory-point.html', {'fabrics': fabrics, 'form': form})
+    if request.method == 'POST':
+        pass
+
+    if request.method == 'DELETE':
+        fabric_id = request.GET.get('id', None)
+        if fabric_id is None:
+            return HttpResponse('', status='404')
+        fabric = FactoryPoint.objects.get(pk=fabric_id)
+        if fabric is None:
+            return HttpResponse('', status='404')
+        fabric.delete()
         return HttpResponse(request, '', status='200')

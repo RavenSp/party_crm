@@ -225,7 +225,15 @@ def factory(request: HttpRequest):
         form = FabricForm()
         return render(request, 'press/factory-point.html', {'fabrics': fabrics, 'form': form})
     if request.method == 'POST':
-        pass
+        fabric_form = FabricForm(request.POST)
+        if fabric_form.is_valid():
+            fabric_form.save()
+        else:
+            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя должно быть уникальным!'}))
+        fabrics = FactoryPoint.objects.prefetch_related('town').prefetch_related('distributions').order_by(
+            'town__title', 'title').all()
+        html = render_block_to_string('press/factory-point.html', 'factory_list', {'fabrics': fabrics}, request)
+        return HttpResponse(html, status='201')
 
     if request.method == 'DELETE':
         fabric_id = request.GET.get('id', None)

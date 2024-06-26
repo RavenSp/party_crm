@@ -6,7 +6,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from .forms import DistributionForm, FabricForm
 from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbersOnDistribution, \
-    DistributionPartyMembers, DistributionSympathizerMember, Distribution, Town
+    DistributionPartyMembers, DistributionSympathizerMember, Distribution, Town, Newspaper
 from helpers.common import name_normalizer
 from person.models import Person
 from press.services import distributions, report
@@ -229,7 +229,8 @@ def factory(request: HttpRequest):
         if fabric_form.is_valid():
             fabric_form.save()
         else:
-            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя должно быть уникальным!'}))
+            error_list = "\n".join([x for x in list(fabric_form.errors.values())])
+            return retarget(render(request, 'error_alert.html', {'alert_message': f'Исправьте следующие ошибки: {error_list}'}), '#modal-alert')
         fabrics = FactoryPoint.objects.prefetch_related('town').prefetch_related('distributions').order_by(
             'town__title', 'title').all()
         html = render_block_to_string('press/factory-point.html', 'factory_list', {'fabrics': fabrics}, request)
@@ -243,4 +244,36 @@ def factory(request: HttpRequest):
         if fabric is None:
             return HttpResponse('', status='404')
         fabric.delete()
+        return HttpResponse(request, '', status='200')
+
+
+@login_required()
+def newspaper(request: HttpRequest):
+    if request.method == 'GET':
+        newspapers = Newspaper.objects.order_by('title').all()
+        return render(request, 'press/newspapers.html', {'newspapers': newspapers})
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '')
+        short_title = request.POST.get('short-title',  '')
+        if title.strip == '':
+            return retarget(render(request, 'error_alert.html', {'alert_message': f'Поле Название не должно быть пустым!'}), '#modal-alert')
+        if short_title.strip == '':
+            return retarget(
+                render(request, 'error_alert.html', {'alert_message': f'Поле Краткое название не должно быть пустым!'}),
+                '#modal-alert')
+        newspaper_new = Newspaper(title=title, short_title=short_title)
+        newspaper_new.save()
+        newspapers = Newspaper.objects.order_by('title').all()
+        html = render_block_to_string('press/newspapers.html', 'newspaper_list', {'newspapers': newspapers}, request)
+        return HttpResponse(html, status='201')
+
+    if request.method == 'DELETE':
+        newspaper_id = request.GET.get('id', None)
+        if newspaper_id is None:
+            return HttpResponse('', status='404')
+        newspaper_d = Newspaper.objects.get(pk=newspaper_id)
+        if newspaper_d is None:
+            return HttpResponse('', status='404')
+        newspaper_d.delete()
         return HttpResponse(request, '', status='200')

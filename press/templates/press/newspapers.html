@@ -1,0 +1,77 @@
+{% load widget_tweaks %}
+{% block main_content %}
+
+
+    <div class="row">
+        <div class="col">
+            <h3>Газеты</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-8 mb-2">
+            <button class="btn btn-primary" onclick="document.getElementById('dialog-newspaper').showModal();">Добавить
+                газету
+            </button>
+            <dialog id="dialog-newspaper" class="choiceModal">
+                <div class="dialog-header">
+                    <h5 class="modal-title">Добавить газету</h5>
+                    <button type="button" class="btn-close" aria-label="Close"
+                            onclick="document.getElementById('dialog-newspaper').close()"></button>
+                </div>
+                <div class="dialog-body m-3">
+                    <div class="mb-2" id="modal-alert"></div>
+                    <form hx-post="{% url 'press:newspaper' %}" hx-target="#newspaper-list" id="newspaper-form">
+                        <div class="mb-2">
+                            <label for="title" class="form-label">Название</label>
+                            <input type="text" class="form-control" id="title" required max="255" name="title">
+                        </div>
+                        <div class="mb-2">
+                            <label for="short-title" class="form-label">Краткое название</label>
+                            <input type="text" class="form-control" id="short-title" required name="short-title">
+                        </div>
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-primary" type="submit">Сохранить</button>
+                            <button class="btn btn-secondary" type="reset"
+                                    onclick="document.getElementById('dialog-newspaper').close()">Отмена
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
+        </div>
+    </div>
+    <div class="row">
+        {% block newspaper_list %}
+            <div class="col-12 col-md-8" id="newspaper-list" hx-confirm="Вы уверены?" hx-target="closest li"
+                 hx-swap="outerHTML swap:0.5s">
+                <ul class="list-group mb-2">
+                    {% for newspaper in newspapers %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ newspaper.title }} ({{ newspaper.short_title }})
+                            {% if newspaper.newspaper.all|length > 0 %}
+                                <span class="badge text-bg-primary rounded-pill">{{ newspaper.newspaper.all|length }}</span>
+                            {% else %}
+                                <span class="badge text-bg-primary rounded-pill"
+                                      hx-delete="{% url 'press:newspaper' %}?id={{ newspaper.pk }}"
+                                >Удалить</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endblock newspaper_list %}
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+    <script>
+        document.addEventListener('htmx:afterRequest', function (evt) {
+            if (evt.detail.xhr.status == 201) {
+                document.getElementById('newspaper-form').reset()
+                document.getElementById('dialog-newspaper').close()
+            }
+        })
+    </script>
+
+{% endblock scripts %}

@@ -22,7 +22,7 @@
                     <div class="mb-2" id="modal-alert"></div>
                     <form hx-post="{% url 'press:number' %}" hx-target="#number-list" id="number-form">
                         <div class="mb-2">
-                            <label for="town-select" class="form-label">{{ form.town.label }}</label>
+                            <label for="number" class="form-label">{{ form.town.label }}</label>
                             {% render_field form.town  class='form-select' aria-label="Town select" id='town-select' required='' %}
                         </div>
                         <div class="mb-3">

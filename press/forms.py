@@ -16,8 +16,6 @@ class FabricForm(ModelForm):
 
 
 class NewspapersNumberForm(ModelForm):
-    year = forms.IntegerField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    newspaper_number = forms.IntegerField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     class Meta:
         model = NewspaperNumber
         fields = ['newspaper', 'number', 'year']

@@ -20,23 +20,26 @@
                 </div>
                 <div class="dialog-body m-3">
                     <div class="mb-2" id="modal-alert"></div>
-                    <form hx-post="{% url 'press:number' %}" hx-target="#number-list" id="number-form">
+                    <form hx-post="{% url 'press:newspaper-numbers' %}" hx-target="#number-list" id="number-form">
                         <div class="mb-2">
-                            <label for="number" class="form-label">{{ form.town.label }}</label>
-                            {% render_field form.town  class='form-select' aria-label="Town select" id='town-select' required='' %}
+                            <label for="newspaper" class="form-label">{{ form.newspaper.label }}</label>
+                            {% render_field form.newspaper  class='form-select' aria-label="newspaper select" id='newspaper-select' required='' %}
                         </div>
                         <div class="mb-3">
-                            <label for="title" class="form-label">{{ form.title.label }}</label>
-                            {% render_field form.title  class='form-control' id='title' required='' %}
+                            <label for="number" class="form-label">{{ form.number.label }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="prefix-number">№</span>
+                                {% render_field form.number  class='form-control' id='number' required='' placeholder='1 (195)' aria-describedby="prefix-number" %}
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label for="description" class="form-label">{{ form.description.label }}</label>
-                            {% render_field form.description  class='form-control' id='description' placeholder='Необязательное поле' %}
+                            <label for="year" class="form-label">{{ form.year.label }}</label>
+                            {% render_field form.year  class='form-control' id='year' placeholder='01.2024' type='month' pattern="[0-9]{4}-[0-9]{2}" %}
                         </div>
                         <div class="d-grid gap-2 d-md-block">
                             <button class="btn btn-primary" type="submit">Сохранить</button>
                             <button class="btn btn-secondary" type="reset"
-                                    onclick="document.getElementById('dialog-factory').close()">Отмена
+                                    onclick="document.getElementById('dialog-number').close()">Отмена
                             </button>
                         </div>
                     </form>
@@ -45,29 +48,29 @@
         </div>
     </div>
     <div class="row">
-        {% block factory_list %}
-            <div class="col-12 col-md-8" id="fabric-list" hx-confirm="Вы уверены?" hx-target="closest li"
+        {% block numbers_list %}
+            <div class="col-12 col-md-8" id="number-list" hx-confirm="Вы уверены?" hx-target="closest li"
                  hx-swap="outerHTML swap:0.5s">
-                {% for fabric in fabrics %}
-                    {% ifchanged fabric.town_id %}
+                {% for numb in newspapers_numbers %}
+                    {% ifchanged numb.newspaper_id %}
                         </ul>
-                        <h4>{{ fabric.town.title }}</h4>
+                        <h4>{{ numb.newspaper.title }}</h4>
                         <ul class="list-group mb-2">
                     {% endifchanged %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                    {{ fabric.title }}
-                    {% if fabric.distributions.all|length > 0 %}
-                        <span class="badge text-bg-primary rounded-pill">{{ fabric.distributions.all|length }}</span>
+                    {{ numb.newspaper.short_title }} №{{ numb.number }}
+                    {% if numb.distributions.all|length > 0 %}
+                        <span class="badge text-bg-primary rounded-pill">{{ numb.distributions.all|length }}</span>
                     {% else %}
                         <span class="badge text-bg-primary rounded-pill"
-                              hx-delete="{% url 'press:factory' %}?id={{ fabric.pk }}"
+                              hx-delete="{% url 'press:factory' %}?id={{ numb.pk }}"
                         >Удалить</span>
                     {% endif %}
                 </li>
 
                 {% endfor %}
             </div>
-        {% endblock factory_list %}
+        {% endblock numbers_list %}
     </div>
 {% endblock %}
 
@@ -76,8 +79,8 @@
     <script>
         document.addEventListener('htmx:afterRequest', function (evt) {
             if (evt.detail.xhr.status == 201) {
-                document.getElementById('fabric-form').reset()
-                document.getElementById('dialog-factory').close()
+                document.getElementById('number-form').reset()
+                document.getElementById('dialog-number').close()
             }
         })
     </script>

@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, HttpResponse, FileResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-from .forms import DistributionForm, FabricForm
+from .forms import DistributionForm, FabricForm, NewspapersNumberForm
 from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbersOnDistribution, \
     DistributionPartyMembers, DistributionSympathizerMember, Distribution, Town, Newspaper
 from helpers.common import name_normalizer
@@ -277,3 +277,38 @@ def newspaper(request: HttpRequest):
             return HttpResponse('', status='404')
         newspaper_d.delete()
         return HttpResponse(request, '', status='200')
+
+
+@login_required()
+def newspaper_numbers(request: HttpRequest):
+    if request.method == 'GET':
+        newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title', '-year').all()
+        form = NewspapersNumberForm()
+        return render(request, 'press/newspaper-numbers.html', {'newspapers_numbers': newspapers_numbers, 'form': form})
+
+    if request.method == 'DELETE':
+        newspaper_number_id = request.GET.get('id', None)
+        if newspaper_number_id is None:
+            return HttpResponse('', status='404')
+        newspaper_d = Newspaper.objects.get(pk=newspaper_number_id)
+        if newspaper_d is None:
+            return HttpResponse('', status='404')
+        newspaper_d.delete()
+        return HttpResponse(request, '', status='200')
+
+    if request.method == 'POST':
+        updated_request = request.POST.copy()
+        updated_request.update({'year': updated_request.get('year', '') + '-01'})
+
+        form = NewspapersNumberForm(updated_request)
+
+        if form.is_valid():
+            form.save()
+        else:
+            print(form.errors)
+            return retarget(
+                render(request, 'error_alert.html', {'alert_message': f'Исправьте следующие ошибки'}),
+                '#modal-alert')
+        newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title', 'year').all()
+        html = render_block_to_string('press/newspaper-numbers.html', 'numbers_list', {'newspapers_numbers': newspapers_numbers}, request)
+        return HttpResponse(html, status='201')

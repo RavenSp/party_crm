@@ -76,13 +76,6 @@ def new_distrib(request: HttpRequest):
                 )
                 n_newspaper.save()
 
-            for p_member in party_members:
-                n_party_member = DistributionPartyMembers(
-                    distribution=n_distrib,
-                    member_id=p_member
-                )
-                n_party_member.save()
-
             sympathizers_ids = [x for x in Sympathizer.objects.all() if
                                 x.normalize_name in [name_normalizer(x) for x in sympathizers]]
 
@@ -92,11 +85,31 @@ def new_distrib(request: HttpRequest):
                 n_sympathizer.save()
                 sympathizers_ids.append(n_sympathizer)
 
+            all_memb_count = len(party_members) + len(sympathizers)
+            all_quantity = sum(newspapers_quantity)
+            cnt_memb = {x.pk: all_quantity // all_memb_count for x in party_members}
+            cnt_symp = {x.pk: all_quantity // all_memb_count for x in sympathizers_ids}
+
+            # if all_quantity % all_memb_count and len(sympathizers) > 0:
+            #     for i in range(all_quantity % all_memb_count):
+            #
+            # elif all_quantity % all_memb_count:
+            #     pass
+
             for sympathizer in sympathizers_ids:
                 DistributionSympathizerMember(
                     distribution=n_distrib,
-                    member=sympathizer
+                    member=sympathizer,
+                    quantity=cnt_symp.get(sympathizer.pk, 0)
                 ).save()
+
+            for p_member in party_members:
+                n_party_member = DistributionPartyMembers(
+                    distribution=n_distrib,
+                    member_id=p_member,
+                    quantity=cnt_memb.get(sympathizer.pk, 0)
+                )
+                n_party_member.save()
 
             return redirect('press:all')
 

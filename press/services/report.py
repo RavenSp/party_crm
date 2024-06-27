@@ -40,7 +40,6 @@ def generate_report():
             for mbm in all_members:
                 if mbm['name'] == f'соч. {sympathier.member.name}':
                     mbm['months'][distrib.distribution_date.month] += count // m_count
-        print(all_members)
         if count % m_count > 0:
             cnt = 0
             if sympathier_count > 0:

@@ -36,6 +36,8 @@
         {% include "mobile_menu.html" %}
         <!-- КОНЕЦ МОБИЛЬНОГО МЕНЮ -->
     {% endif %}
+    <script src="{% static 'js/jquery.slim.min.js' %}"></script>
+    <script src="{% static 'js/select2.full.min.js' %}"></script>
     <script>
         function alpineSelect() {
             return {
@@ -74,8 +76,7 @@
             })
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+
     {% block scripts %}{% endblock %}
 </body>
 

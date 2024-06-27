@@ -63,7 +63,7 @@
                         <span class="badge text-bg-primary rounded-pill">{{ numb.distributions.all|length }}</span>
                     {% else %}
                         <span class="badge text-bg-primary rounded-pill"
-                              hx-delete="{% url 'press:factory' %}?id={{ numb.pk }}"
+                              hx-delete="{% url 'press:newspaper-numbers' %}?id={{ numb.pk }}"
                         >Удалить</span>
                     {% endif %}
                 </li>

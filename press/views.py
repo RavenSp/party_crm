@@ -290,7 +290,7 @@ def newspaper_numbers(request: HttpRequest):
         newspaper_number_id = request.GET.get('id', None)
         if newspaper_number_id is None:
             return HttpResponse('', status='404')
-        newspaper_d = Newspaper.objects.get(pk=newspaper_number_id)
+        newspaper_d = NewspaperNumber.objects.get(pk=newspaper_number_id)
         if newspaper_d is None:
             return HttpResponse('', status='404')
         newspaper_d.delete()

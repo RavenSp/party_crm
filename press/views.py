@@ -25,6 +25,11 @@ def my_distribution(request: HttpRequest):
         result = render(request, 'press/all_distribution.html', {'distribs': distribs})
         print(connection.queries)
         return result
+    if request.method == 'POST':
+        filters = request.POST.dict()
+        distribs = distributions.get_all({x: filters[x] for x in filters if filters[x] != ''})
+        result = render_block_to_string('press/all_distribution.html', 'table-distrib', {'distribs': distribs}, request)
+        return HttpResponse(result, status='200')
 
 
 @login_required()

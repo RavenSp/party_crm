@@ -104,6 +104,7 @@ class NewspaperNumbersOnDistribution(models.Model):
 class DistributionPartyMembers(models.Model):
     member = models.ForeignKey(to=Person, verbose_name='Раздающий', related_name='distributions', on_delete=models.PROTECT)
     distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='party_members', on_delete=models.CASCADE)
+    quantity = models.IntegerField(verbose_name='Количество розданных газет', blank=True, null=True)
 
     def __str__(self):
         return f"Член партии на раздаче ID {self.pk}"
@@ -112,6 +113,7 @@ class DistributionPartyMembers(models.Model):
 class DistributionSympathizerMember(models.Model):
     member = models.ForeignKey(to=Sympathizer, verbose_name='Раздающий сочувствующий', related_name='distributions', on_delete=models.PROTECT)
     distribution = models.ForeignKey(to=Distribution, verbose_name='Раздача', related_name='sympathizer_members', on_delete=models.CASCADE)
+    quantity = models.IntegerField(verbose_name='Количество розданных газет', blank=True, null=True)
 
     def __str__(self):
         return f"Сочувствующий на раздаче ID {self.pk}"

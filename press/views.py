@@ -1,17 +1,19 @@
 import datetime
-
+from django_htmx.http import retarget
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, HttpResponse, FileResponse, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-from .forms import DistributionForm
+from .forms import DistributionForm, FabricForm, NewspapersNumberForm
 from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbersOnDistribution, \
-    DistributionPartyMembers, DistributionSympathizerMember, Distribution
+    DistributionPartyMembers, DistributionSympathizerMember, Distribution, Town, Newspaper
 from helpers.common import name_normalizer
 from person.models import Person
 from press.services import distributions, report
 from django.db import connection
 from render_block import render_block_to_string
+
+
 # Create your views here.
 
 
@@ -20,9 +22,17 @@ def my_distribution(request: HttpRequest):
     if request.method == 'GET':
         distribs = distributions.get_all(
             {'distribution_date__gte': (datetime.date.today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d')})
-        result = render(request, 'press/all_distribution.html', {'distribs': distribs})
-        print(connection.queries)
+        if request.htmx:
+            result = HttpResponse(render_block_to_string('press/all_distribution.html', 'table-distrib', {'distribs': distribs}, request), status='200')
+        else:
+            factoryes = FactoryPoint.objects.select_related('town').order_by('-town__title', 'title').all()
+            result = render(request, 'press/all_distribution.html', {'distribs': distribs, 'factoryes': factoryes})
         return result
+    if request.method == 'POST':
+        filters = request.POST.dict()
+        distribs = distributions.get_all({x: filters[x] for x in filters if filters[x] != ''})
+        result = render_block_to_string('press/all_distribution.html', 'table-distrib', {'distribs': distribs}, request)
+        return HttpResponse(result, status='200')
 
 
 @login_required()
@@ -33,7 +43,7 @@ def new_distrib(request: HttpRequest):
             'start_time': (datetime.datetime.now() - datetime.timedelta(minutes=60)).strftime("%H:%M"),
             'end_time': datetime.datetime.now().strftime("%H:%M"),
         })
-
+        factoryes = FactoryPoint.objects.select_related('town').order_by('-town__title', 'title').all()
         party_members = Person.objects.filter(party_member=True).order_by('-last_name').all()
         sympathizers = Sympathizer.objects.all()
         newspapers = NewspaperNumber.objects.select_related('newspaper').order_by('year').all()
@@ -42,6 +52,7 @@ def new_distrib(request: HttpRequest):
             'party_members': party_members,
             'sympathizers': sympathizers,
             'newspapers': newspapers,
+            'factoryes': factoryes,
             'datenow': datetime.date.today()
         })
     elif request.method == 'POST':
@@ -73,26 +84,48 @@ def new_distrib(request: HttpRequest):
                 )
                 n_newspaper.save()
 
-            for p_member in party_members:
-                n_party_member = DistributionPartyMembers(
-                    distribution=n_distrib,
-                    member_id=p_member
-                )
-                n_party_member.save()
-
             sympathizers_ids = [x for x in Sympathizer.objects.all() if
                                 x.normalize_name in [name_normalizer(x) for x in sympathizers]]
 
-            for new_sympathizer_name in [x for x in sympathizers if name_normalizer(x) not in [x.normalize_name for x in sympathizers_ids]]:
+            for new_sympathizer_name in [x for x in sympathizers if
+                                         name_normalizer(x) not in [x.normalize_name for x in sympathizers_ids]]:
                 n_sympathizer = Sympathizer(name=new_sympathizer_name)
                 n_sympathizer.save()
                 sympathizers_ids.append(n_sympathizer)
 
+            all_memb_count = len(party_members) + len(sympathizers)
+            all_quantity = sum([int(x) for x in newspapers_quantity])
+            cnt_memb = {x: all_quantity // all_memb_count for x in party_members}
+            cnt_symp = {x.pk: all_quantity // all_memb_count for x in sympathizers_ids}
+
+            if all_quantity % all_memb_count and len(sympathizers) > 0:
+                for i in cnt_symp:
+                    cnt_symp[i] += (all_quantity % all_memb_count) // len(sympathizers)
+                if (all_quantity % all_memb_count) % len(sympathizers):
+                    for i in [x for x in cnt_symp][:(all_quantity % all_memb_count) % len(sympathizers)]:
+                        cnt_symp[i] += 1
+            elif all_quantity % all_memb_count:
+                for i in cnt_memb:
+                    cnt_memb[i] += (all_quantity % all_memb_count) // len(party_members)
+                if (all_quantity % all_memb_count) % len(party_members):
+                    for i in [x for x in cnt_memb][:(all_quantity % all_memb_count) % len(party_members)]:
+                        cnt_memb[i] += 1
+
             for sympathizer in sympathizers_ids:
+                print(sympathizer)
                 DistributionSympathizerMember(
                     distribution=n_distrib,
-                    member=sympathizer
+                    member=sympathizer,
+                    quantity=cnt_symp.get(sympathizer.pk, 0)
                 ).save()
+
+            for p_member in party_members:
+                n_party_member = DistributionPartyMembers(
+                    distribution=n_distrib,
+                    member_id=p_member,
+                    quantity=cnt_memb.get(p_member, 0)
+                )
+                n_party_member.save()
 
             return redirect('press:all')
 
@@ -184,3 +217,135 @@ def report_generate(request: HttpRequest):
     file_report = report.generate_report()
     return FileResponse(file_report, filename='Отчёт о раздачах.xlsx', as_attachment=False)
 
+
+@login_required()
+def towns(request: HttpRequest):
+    if request.method == 'GET':
+        towns = Town.objects.prefetch_related('factories').order_by('title').all()
+        return render(request, 'press/towns.html', {'towns': towns})
+    if request.method == 'POST':
+        town_name = request.POST.get('town-name', None)
+        if town_name is None or town_name == '':
+            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя не должно быть пустым!'}),
+                            '#modal-alert')
+        if Town.objects.filter(title=town_name).exists():
+            return retarget(render(request, 'error_alert.html', {'alert_message': 'Имя должно быть уникальным!'}),
+                            '#modal-alert')
+        town = Town(title=town_name)
+        town.save()
+        towns = Town.objects.prefetch_related('factories').order_by('title').all()
+        html = render_block_to_string('press/towns.html', 'towns_list', {'towns': towns}, request)
+
+        return HttpResponse(html, status='201')
+
+
+@login_required()
+def towns_delete(request: HttpRequest, pk: int):
+    if request.method == 'DELETE':
+        town = Town.objects.get(pk=pk)
+        town.delete()
+        return HttpResponse(request, '', status='200')
+
+
+@login_required()
+def factory(request: HttpRequest):
+    if request.method == 'GET':
+        fabrics = FactoryPoint.objects.prefetch_related('town').prefetch_related('distributions').order_by(
+            'town__title', 'title').all()
+        form = FabricForm()
+        return render(request, 'press/factory-point.html', {'fabrics': fabrics, 'form': form})
+    if request.method == 'POST':
+        fabric_form = FabricForm(request.POST)
+        if fabric_form.is_valid():
+            fabric_form.save()
+        else:
+            error_list = "\n".join([x for x in list(fabric_form.errors.values())])
+            return retarget(
+                render(request, 'error_alert.html', {'alert_message': f'Исправьте следующие ошибки: {error_list}'}),
+                '#modal-alert')
+        fabrics = FactoryPoint.objects.prefetch_related('town').prefetch_related('distributions').order_by(
+            'town__title', 'title').all()
+        html = render_block_to_string('press/factory-point.html', 'factory_list', {'fabrics': fabrics}, request)
+        return HttpResponse(html, status='201')
+
+    if request.method == 'DELETE':
+        fabric_id = request.GET.get('id', None)
+        if fabric_id is None:
+            return HttpResponse('', status='404')
+        fabric = FactoryPoint.objects.get(pk=fabric_id)
+        if fabric is None:
+            return HttpResponse('', status='404')
+        fabric.delete()
+        return HttpResponse(request, '', status='200')
+
+
+@login_required()
+def newspaper(request: HttpRequest):
+    if request.method == 'GET':
+        newspapers = Newspaper.objects.order_by('title').all()
+        return render(request, 'press/newspapers.html', {'newspapers': newspapers})
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '')
+        short_title = request.POST.get('short-title', '')
+        if title.strip == '':
+            return retarget(
+                render(request, 'error_alert.html', {'alert_message': f'Поле Название не должно быть пустым!'}),
+                '#modal-alert')
+        if short_title.strip == '':
+            return retarget(
+                render(request, 'error_alert.html', {'alert_message': f'Поле Краткое название не должно быть пустым!'}),
+                '#modal-alert')
+        newspaper_new = Newspaper(title=title, short_title=short_title)
+        newspaper_new.save()
+        newspapers = Newspaper.objects.order_by('title').all()
+        html = render_block_to_string('press/newspapers.html', 'newspaper_list', {'newspapers': newspapers}, request)
+        return HttpResponse(html, status='201')
+
+    if request.method == 'DELETE':
+        newspaper_id = request.GET.get('id', None)
+        if newspaper_id is None:
+            return HttpResponse('', status='404')
+        newspaper_d = Newspaper.objects.get(pk=newspaper_id)
+        if newspaper_d is None:
+            return HttpResponse('', status='404')
+        newspaper_d.delete()
+        return HttpResponse(request, '', status='200')
+
+
+@login_required()
+def newspaper_numbers(request: HttpRequest):
+    if request.method == 'GET':
+        newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title',
+                                                                                          '-year').all()
+        form = NewspapersNumberForm()
+        return render(request, 'press/newspaper-numbers.html', {'newspapers_numbers': newspapers_numbers, 'form': form})
+
+    if request.method == 'DELETE':
+        newspaper_number_id = request.GET.get('id', None)
+        if newspaper_number_id is None:
+            return HttpResponse('', status='404')
+        newspaper_d = NewspaperNumber.objects.get(pk=newspaper_number_id)
+        if newspaper_d is None:
+            return HttpResponse('', status='404')
+        newspaper_d.delete()
+        return HttpResponse(request, '', status='200')
+
+    if request.method == 'POST':
+        updated_request = request.POST.copy()
+        updated_request.update({'year': updated_request.get('year', '') + '-01'})
+
+        form = NewspapersNumberForm(updated_request)
+
+        if form.is_valid():
+            form.save()
+        else:
+            print(form.errors)
+            return retarget(
+                render(request, 'error_alert.html', {'alert_message': f'Исправьте следующие ошибки'}),
+                '#modal-alert')
+        newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title',
+                                                                                          'year').all()
+        html = render_block_to_string('press/newspaper-numbers.html', 'numbers_list',
+                                      {'newspapers_numbers': newspapers_numbers}, request)
+        return HttpResponse(html, status='201')

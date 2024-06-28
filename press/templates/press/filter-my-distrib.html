@@ -1,1 +1,47 @@
-test tesxt
+<form hx-post="{% url 'press:all' %}"
+      hx-target="#table-distrib"
+      hx-swap="outerHTML"
+      id="distrib-filter"
+>
+    <div class="row g-3 mb-2">
+        <div class="col">
+            <label for="start-date" class="form-label">Дата начала</label>
+            <input type="date" class="form-control" name="distribution_date__gte" id="start-date">
+        </div>
+        <div class="col">
+            <label for="end-date" class="form-label">Дата окончании</label>
+            <input type="date" class="form-control" name="distribution_date__lte" id="end-date">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col g-3">
+            <label for="fabric" class="form-label">Предприятие</label>
+            <select name="factory" data-placeholder="Выберите предприятие"id="fabric"
+                    class="js-states form-control" data-select2-id="fabric" tabindex="-1" aria-hidden="true">
+                <option value="" selected>-------</option>
+                {% for factory in factoryes %}
+                    {% ifchanged factory.town_id %}
+                        <optgroup label="{{ factory.town.title }}">
+                    {% endifchanged %}
+                <option value="{{ factory.pk }}">{{ factory.title }}</option>
+                {% ifchanged factory.town_id %}
+                    </optgroup>
+                {% endifchanged %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col g-3">
+            <button class="btn btn-primary btn-sm" type="submit">Применить</button>
+            <button class="btn btn-secondary btn-sm" type="reset"
+                    onclick="document.getElementById('distrib-filter').reset()" data-bs-toggle="collapse"
+                    data-bs-target="#collapseFilter"
+                    aria-expanded="false" aria-controls="collapseFilter" hx-get="{% url 'press:all' %}"
+                    hx-target="#table-distrib" hx-swap="outerHTML">Сбросить фильтр
+            </button>
+        </div>
+    </div>
+
+
+</form>

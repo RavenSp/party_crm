@@ -161,3 +161,5 @@ cython_debug/
 static/node_modules
 package.json
 node_modules
+*.sqlite3
+config/local_settings.py

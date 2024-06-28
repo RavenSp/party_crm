@@ -44,15 +44,15 @@ def generate_report():
             cnt = 0
             if sympathier_count > 0:
                 while cnt < count % m_count:
-                    for mbm in [x for x in all_members if x['name'].startswith('соч. ')]:
-                        all_members[all_members.index(mbm)]['months'][distrib.distribution_date.month] += 1
+                    for mbm in distrib.sympathizer_members.all():
+                        next(filter(lambda x: x['name'] == f'соч. {mbm.member.name}', all_members))['months'][distrib.distribution_date.month] += 1
                         cnt += 1
                         if cnt == count % m_count:
                             break
             else:
                 while cnt < count % m_count:
-                    for mbm in [x for x in all_members]:
-                        all_members[all_members.index(mbm)]['months'][distrib.distribution_date.month] += 1
+                    for mbm in distrib.party_members.all():
+                        next(filter(lambda x: x['name'] == mbm.member.full_name, all_members))['months'][distrib.distribution_date.month] += 1
                         cnt += 1
                         if cnt == count % m_count:
                             break

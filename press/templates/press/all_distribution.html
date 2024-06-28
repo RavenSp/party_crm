@@ -32,96 +32,124 @@
             </div>
         </div>
         {% block table-distrib %}
-        <div id="table-distrib" class="mt-3">
-            <div class="accordion" id="accordionPanelsDistrib mb-5">
-                {% for distirb in distribs %}
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#panelsStayOpen-collapse{{ distirb.pk }}" aria-expanded="true"
-                                aria-controls="panelsStayOpen-collapse{{ distirb.pk }}">
-                            {{ distirb.distribution_date }} /
-                            {{ distirb.factory }}
-                        </button>
-                    </h2>
-                    <div id="panelsStayOpen-collapse{{ distirb.pk }}" class="accordion-collapse collapse">
-                        <div class="accordion-body">
-                            <div class="mb-1">
-                                <b>Время раздачи:</b> с {{ distirb.start_time }} по {{ distirb.end_time }}
-                            </div>
-                            <div class="mb-1">
-                                <b>Нас. пункт:</b> {{ distirb.factory.town }}
-                            </div>
-                            <div class="mb-1">
-                                <b>Предприятие: </b> {{ distirb.factory }}
-                            </div>
-                            <div class="mb-1">
-                                <b></b>
-                            </div>
-                            <div class="mb-1">
-                                <b>Количество раздающих: </b> {% with lenMem=distirb.party_members.all|length %}
-                            {{ distirb.sympathizer_members.all|length|add:lenMem }}{% endwith %}
-                            </div>
-                            {% if distirb.party_members.all|length > 0 %}
-                            <div class="mb-1">
-                                <b>Члены парии:</b><br>
-                                 {% for member in distirb.party_members.all %}{{ member.member.full_name }}
-                                    {% if not forloop.last %}<br>{% endif %}{% endfor %}
-                            </div>
-                            {% endif %}
-                            {% if distirb.sympathizer_members.all|length > 0 %}
-                            <div class="mb-1">
-                                <b>Сочувствующие:</b><br>
-                                {% for member in distirb.sympathizer_members.all %}соч.
-                                    {{ member.member.name }}{% if not forloop.last %}<br>{% endif %}
-                                {% endfor %}
-                            </div>
-                            {% endif %}
-                            <div class="mb-1">
-                                <b>Номера газет: </b><br>
-                            {% for number in distirb.numbers.all %}
-                                {{ number.number.newspaper.short_title }} {{ number.number.number }}:
-                                {{ number.quantity }} шт.{% if not forloop.last %}<br>{% endif %}
-                            {% endfor %}
-                            </div>
-                            {% if distirb.description %}
-                                <b>Примечание:</b><br>
-                                {{ distirb.description }}
-                            {% endif %}
-                        <div class="mb-1">
-                        <i class="text-secondary">Автор записи:  {{ distirb.autor.full_name }}</i>
-                        </div>
-                        {% if distirb.autor == user %}
-                            <hr>
-                            <dialog id="dialog-delete-{{ distirb.pk }}">
-                            {# Прописать стили для  #}
-                                <div class="dialog-header">
-                                    <h5 class="modal-title">Удаление раздачи {{ distirb.distribution_date }} / {{ distirb.factory }}</h5>
-                                    <button type="button" class="btn-close" aria-label="Close"
-                                        onclick="document.getElementById('dialog-delete-{{ distirb.pk }}').close()"></button>
+            {% if distribs|length > 0 %}
+                <div id="table-distrib" class="mt-3">
+                    <div class="accordion" id="accordionPanelsDistrib mb-5">
+                        {% for distirb in distribs %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapse{{ distirb.pk }}"
+                                            aria-expanded="true"
+                                            aria-controls="panelsStayOpen-collapse{{ distirb.pk }}">
+                                        {{ distirb.distribution_date }} /
+                                        {{ distirb.factory }}
+                                    </button>
+                                </h2>
+                                <div id="panelsStayOpen-collapse{{ distirb.pk }}" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        <div class="mb-1">
+                                            <b>Время раздачи:</b> с {{ distirb.start_time }} по {{ distirb.end_time }}
+                                        </div>
+                                        <div class="mb-1">
+                                            <b>Нас. пункт:</b> {{ distirb.factory.town }}
+                                        </div>
+                                        <div class="mb-1">
+                                            <b>Предприятие: </b> {{ distirb.factory }}
+                                        </div>
+                                        <div class="mb-1">
+                                            <b></b>
+                                        </div>
+                                        <div class="mb-1">
+                                            <b>Количество раздающих: </b>
+                                            {% with lenMem=distirb.party_members.all|length %}
+                                                {{ distirb.sympathizer_members.all|length|add:lenMem }}{% endwith %}
+                                        </div>
+                                        {% if distirb.party_members.all|length > 0 %}
+                                            <div class="mb-1">
+                                                <b>Члены парии:</b><br>
+                                                {% for member in distirb.party_members.all %}
+                                                    {{ member.member.full_name }}
+                                                    {% if not forloop.last %}<br>{% endif %}{% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        {% if distirb.sympathizer_members.all|length > 0 %}
+                                            <div class="mb-1">
+                                                <b>Сочувствующие:</b><br>
+                                                {% for member in distirb.sympathizer_members.all %}соч.
+                                                    {{ member.member.name }}{% if not forloop.last %}<br>{% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <div class="mb-1">
+                                            <b>Номера газет: </b><br>
+                                            {% for number in distirb.numbers.all %}
+                                                {{ number.number.newspaper.short_title }} {{ number.number.number }}:
+                                                {{ number.quantity }} шт.{% if not forloop.last %}<br>{% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        {% if distirb.description %}
+                                            <b>Примечание:</b><br>
+                                            {{ distirb.description }}
+                                        {% endif %}
+                                        <div class="mb-1">
+                                            <i class="text-secondary">Автор записи: {{ distirb.autor.full_name }}</i>
+                                        </div>
+                                        {% if distirb.autor == user %}
+                                            <hr>
+                                            <dialog id="dialog-delete-{{ distirb.pk }}">
+                                                {# Прописать стили для  #}
+                                                <div class="dialog-header">
+                                                    <h5 class="modal-title">Удаление
+                                                        раздачи {{ distirb.distribution_date }}
+                                                        / {{ distirb.factory }}</h5>
+                                                    <button type="button" class="btn-close" aria-label="Close"
+                                                            onclick="document.getElementById('dialog-delete-{{ distirb.pk }}').close()"></button>
+                                                </div>
+                                                <div class="dialog-body m-3">
+                                                    <h6>Вы уверены?</h6>
+                                                    <hr>
+                                                    <button class="btn btn-danger"
+                                                            hx-delete="{% url 'press:hx-distrib' pk=distirb.pk %}"
+                                                            hx-target="#table-distrib"
+                                                    >Да
+                                                    </button>
+                                                    <button class="btn btn-secondary"
+                                                            onclick="document.getElementById('dialog-delete-{{ distirb.pk }}').close()"
+                                                    >Отмена
+                                                    </button>
+                                                </div>
+                                            </dialog>
+                                            <button class="btn btn-danger"
+                                                    onclick="document.getElementById('dialog-delete-{{ distirb.pk }}').showModal();"
+                                            >Удалить
+                                            </button>
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                <div class="dialog-body m-3">
-                                    <h6>Вы уверены?</h6>
-                                    <hr>
-                                    <button class="btn btn-danger"
-                                            hx-delete="{% url 'press:hx-distrib' pk=distirb.pk %}"
-                                            hx-target="#table-distrib"
-                                        >Да</button>
-                                    <button class="btn btn-secondary"
-                                            onclick="document.getElementById('dialog-delete-{{ distirb.pk }}').close()"
-                                    >Отмена</button>
-                                </div>
-                            </dialog>
-                            <button class="btn btn-danger"
-                                    onclick="document.getElementById('dialog-delete-{{ distirb.pk }}').showModal();"
-                            >Удалить</button>
-                        {% endif %}
-                        </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endblock %}
+            {% else %}
+                <div id="table-distrib" class="mt-3">
+                    <h5>Нет результатов, удовлетворяющих поиску</h5>
+                    <span><i>Попробуйте сменить условия фильтрации или <b
+                            onclick="document.getElementById('distrib-filter').reset()"
+                            hx-get="{% url 'press:all' %}" hx-target="#table-distrib" hx-swap="outerHTML"
+                            data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false"
+                            aria-controls="collapseFilter">сбросить фильтр</b></i></span>
+                </div>
+            {% endif %}
+        {% endblock table-distrib %}
     </div>
 {% endblock %}
+{% block scripts %}
+    <script>
+        $('#fabric').select2({
+            theme: "bootstrap-5",
+            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
+            placeholder: $(this).data('placeholder'),
+        });
+    </script>
+{% endblock scripts %}

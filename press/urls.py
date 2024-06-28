@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import my_distribution, new_distrib, new_party_member_distrib, new_sympathizer_distrib, hx_add_party_member, hx_delete_party_member, hx_newspaper, hx_distrib, report_generate
+from .views import my_distribution, new_distrib, new_party_member_distrib, new_sympathizer_distrib, hx_add_party_member, \
+    hx_delete_party_member, hx_newspaper, hx_distrib, report_generate, towns, towns_delete, factory, newspaper, newspaper_numbers
 
 urlpatterns = [
     path('', my_distribution, name='all'),
@@ -11,4 +12,9 @@ urlpatterns = [
     path('hx-newspaper-field/', hx_newspaper, name='hx-newspaper-field'),
     path('hx-distrib/<int:pk>/', hx_distrib, name='hx-distrib'),
     path('report/', report_generate, name='report-generate'),
+    path('towns/', towns, name='towns'),
+    path('towns/<int:pk>/', towns_delete, name='towns-delete'),
+    path('factory/', factory, name='factory'),
+    path('newspaper/', newspaper, name='newspaper'),
+    path('newspaper-numbers/', newspaper_numbers, name='newspaper-numbers'),
 ]

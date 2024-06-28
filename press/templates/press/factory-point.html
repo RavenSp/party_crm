@@ -1,0 +1,85 @@
+{% load widget_tweaks %}
+{% block main_content %}
+
+
+    <div class="row">
+        <div class="col">
+            <h3>Предприятия</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-8 mb-2">
+            <button class="btn btn-primary" onclick="document.getElementById('dialog-factory').showModal();">Добавить
+                предприятие
+            </button>
+            <dialog id="dialog-factory" class="choiceModal">
+                <div class="dialog-header">
+                    <h5 class="modal-title">Добавить предприятие</h5>
+                    <button type="button" class="btn-close" aria-label="Close"
+                            onclick="document.getElementById('dialog-factory').close()"></button>
+                </div>
+                <div class="dialog-body m-3">
+                    <div class="mb-2" id="modal-alert"></div>
+                    <form hx-post="{% url 'press:factory' %}" hx-target="#fabric-list" id="fabric-form">
+                        <div class="mb-3">
+                            <label for="town-select" class="form-label">{{ form.town.label }}</label>
+                            {% render_field form.town  class='form-select' aria-label="Town select" id='town-select' required='' %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="title" class="form-label">{{ form.title.label }}</label>
+                            {% render_field form.title  class='form-control' id='title' required='' %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">{{ form.description.label }}</label>
+                            {% render_field form.description  class='form-control' id='description' placeholder='Необязательное поле' %}
+                        </div>
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-primary" type="submit">Сохранить</button>
+                            <button class="btn btn-secondary" type="reset"
+                                    onclick="document.getElementById('dialog-factory').close()">Отмена
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
+        </div>
+    </div>
+    <div class="row">
+        {% block factory_list %}
+            <div class="col-12 col-md-8" id="fabric-list" hx-confirm="Вы уверены?" hx-target="closest li"
+                 hx-swap="outerHTML swap:0.5s">
+                {% for fabric in fabrics %}
+                    {% ifchanged fabric.town_id %}
+                        </ul>
+                        <h4>{{ fabric.town.title }}</h4>
+                        <ul class="list-group mb-2">
+                    {% endifchanged %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ fabric.title }}
+                    {% if fabric.distributions.all|length > 0 %}
+                        <span class="badge text-bg-primary rounded-pill">{{ fabric.distributions.all|length }}</span>
+                    {% else %}
+                        <span class="badge text-bg-primary rounded-pill"
+                              hx-delete="{% url 'press:factory' %}?id={{ fabric.pk }}"
+                        >Удалить</span>
+                    {% endif %}
+                </li>
+
+                {% endfor %}
+            </div>
+        {% endblock factory_list %}
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+    <script>
+        document.addEventListener('htmx:afterRequest', function (evt) {
+            if (evt.detail.xhr.status == 201) {
+                document.getElementById('fabric-form').reset()
+                document.getElementById('dialog-factory').close()
+            }
+        })
+    </script>
+
+{% endblock scripts %}

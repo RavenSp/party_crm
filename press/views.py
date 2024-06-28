@@ -22,8 +22,11 @@ def my_distribution(request: HttpRequest):
     if request.method == 'GET':
         distribs = distributions.get_all(
             {'distribution_date__gte': (datetime.date.today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d')})
-        result = render(request, 'press/all_distribution.html', {'distribs': distribs})
-        print(connection.queries)
+        if request.htmx:
+            result = HttpResponse(render_block_to_string('press/all_distribution.html', 'table-distrib', {'distribs': distribs}, request), status='200')
+        else:
+            factoryes = FactoryPoint.objects.select_related('town').order_by('-town__title', 'title').all()
+            result = render(request, 'press/all_distribution.html', {'distribs': distribs, 'factoryes': factoryes})
         return result
     if request.method == 'POST':
         filters = request.POST.dict()

@@ -16,29 +16,44 @@
         </div>
     </div>
     <div class="row">
-        <div class="col">
-            <table class="table table-sm">
-                <thead>
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col">В текущем месяце</th>
-                    <th scope="col">За все время</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Количество раздач:</td>
-                    <td class="">{{ my_distribution|length }}</td>
-                    <td>{{ all_distribution|length }}</td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="col-lg-6">
+
+            <h3>Моя статистика:</h3>
+
+            <div class="m-2">
+                <div class="bg-primary text-white p-2 rounded-2 mb-1">
+                    <b>Последняя раздача:</b>
+                </div>
+                <div class="ms-2">
+                    {{ my_distribution.last.distribution.distribution_date|timesince }} назад
+                    ({{ my_distribution.last.distribution.distribution_date }})
+                </div>
+            </div>
+
+            <div class="m-2">
+                <div class="bg-primary text-white p-2 rounded-2 mb-1">
+                    <b>Выходов на раздачу:</b></div>
+                <div class="ms-2">
+                    <u>За последние 30 дней:</u> {{ my_distribution|length }}<br><u>За все
+                    время:</u> {{ all_distribution|length }}
+                </div>
+            </div>
+
+             <div class="m-2">
+                <div class="bg-primary text-white p-2 rounded-2 mb-1">
+                    <b>Выходов на раздачу:</b></div>
+                <div class="ms-2">
+                    <u>За последние 30 дней:</u> {{ my_distribution.aaggregate.summ }}<br><u>За все
+                    время:</u> {{ all_distribution|length }}
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="row">
         <div class="col">
-
-            <a href="{% url 'person:logout' %}">
+            <hr>
+            <a href="{% url 'person:logout' %}" onclick="return confirm('Вы действительно хотите выйти из профиля?')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"

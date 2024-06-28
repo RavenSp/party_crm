@@ -1,3 +1,4 @@
+from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from person.services.login import auth_user
@@ -27,6 +28,7 @@ def profile(request: HttpRequest):
     all_distribution = DistributionPartyMembers.objects.select_related('distribution') \
         .filter(member_id=request.user.pk) \
         .all()
+
 
     return render(request, 'person/profile.html',
                   {'my_distribution': my_distribution,

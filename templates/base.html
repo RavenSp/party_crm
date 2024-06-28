@@ -25,7 +25,7 @@
     {% if request.user.is_authenticated %}
     {% include 'top_menu.html' %}
     {% endif %}
-    <main class="container pt-3 mt-md-5" id="main-container">
+    <main class="container pt-3 mt-mb-5" id="main-container">
         {% block main_content %}{% endblock %}
     </main>
     {% if request.user.is_authenticated %}

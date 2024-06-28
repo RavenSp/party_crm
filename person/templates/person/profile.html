@@ -34,17 +34,17 @@
                 <div class="bg-primary text-white p-2 rounded-2 mb-1">
                     <b>Выходов на раздачу:</b></div>
                 <div class="ms-2">
-                    <u>За последние 30 дней:</u> {{ my_distribution|length }}<br><u>За все
-                    время:</u> {{ all_distribution|length }}
+                    <u>В этом месяце:</u> {{ my_distribution|length }}<br>
+                    <u>За все время:</u> {{ all_distribution|length }}
                 </div>
             </div>
 
              <div class="m-2">
                 <div class="bg-primary text-white p-2 rounded-2 mb-1">
-                    <b>Выходов на раздачу:</b></div>
+                    <b>Роздано газет:</b></div>
                 <div class="ms-2">
-                    <u>За последние 30 дней:</u> {{ my_distribution.aaggregate.summ }}<br><u>За все
-                    время:</u> {{ all_distribution|length }}
+                    <u>В этом месяце:</u> {{ sum_my_distrib }}<br>
+                    <u>За все время:</u> {{ sum_all_distrib }}
                 </div>
             </div>
 

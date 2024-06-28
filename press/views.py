@@ -86,17 +86,25 @@ def new_distrib(request: HttpRequest):
                 sympathizers_ids.append(n_sympathizer)
 
             all_memb_count = len(party_members) + len(sympathizers)
-            all_quantity = sum(newspapers_quantity)
-            cnt_memb = {x.pk: all_quantity // all_memb_count for x in party_members}
+            all_quantity = sum([int(x) for x in newspapers_quantity])
+            cnt_memb = {x: all_quantity // all_memb_count for x in party_members}
             cnt_symp = {x.pk: all_quantity // all_memb_count for x in sympathizers_ids}
 
-            # if all_quantity % all_memb_count and len(sympathizers) > 0:
-            #     for i in range(all_quantity % all_memb_count):
-            #
-            # elif all_quantity % all_memb_count:
-            #     pass
+            if all_quantity % all_memb_count and len(sympathizers) > 0:
+                for i in cnt_symp:
+                    cnt_symp[i] += (all_quantity % all_memb_count) // len(sympathizers)
+                if (all_quantity % all_memb_count) % len(sympathizers):
+                    for i in [x for x in cnt_symp][:(all_quantity % all_memb_count) % len(sympathizers)]:
+                        cnt_symp[i] += 1
+            elif all_quantity % all_memb_count:
+                for i in cnt_memb:
+                    cnt_memb[i] += (all_quantity % all_memb_count) // len(party_members)
+                if (all_quantity % all_memb_count) % len(party_members):
+                    for i in [x for x in cnt_memb][:(all_quantity % all_memb_count) % len(party_members)]:
+                        cnt_memb[i] += 1
 
             for sympathizer in sympathizers_ids:
+                print(sympathizer)
                 DistributionSympathizerMember(
                     distribution=n_distrib,
                     member=sympathizer,
@@ -107,7 +115,7 @@ def new_distrib(request: HttpRequest):
                 n_party_member = DistributionPartyMembers(
                     distribution=n_distrib,
                     member_id=p_member,
-                    quantity=cnt_memb.get(sympathizer.pk, 0)
+                    quantity=cnt_memb.get(p_member, 0)
                 )
                 n_party_member.save()
 
@@ -234,7 +242,8 @@ def towns_delete(request: HttpRequest, pk: int):
 @login_required()
 def factory(request: HttpRequest):
     if request.method == 'GET':
-        fabrics = FactoryPoint.objects.prefetch_related('town').prefetch_related('distributions').order_by('town__title', 'title').all()
+        fabrics = FactoryPoint.objects.prefetch_related('town').prefetch_related('distributions').order_by(
+            'town__title', 'title').all()
         form = FabricForm()
         return render(request, 'press/factory-point.html', {'fabrics': fabrics, 'form': form})
     if request.method == 'POST':
@@ -243,7 +252,9 @@ def factory(request: HttpRequest):
             fabric_form.save()
         else:
             error_list = "\n".join([x for x in list(fabric_form.errors.values())])
-            return retarget(render(request, 'error_alert.html', {'alert_message': f'Исправьте следующие ошибки: {error_list}'}), '#modal-alert')
+            return retarget(
+                render(request, 'error_alert.html', {'alert_message': f'Исправьте следующие ошибки: {error_list}'}),
+                '#modal-alert')
         fabrics = FactoryPoint.objects.prefetch_related('town').prefetch_related('distributions').order_by(
             'town__title', 'title').all()
         html = render_block_to_string('press/factory-point.html', 'factory_list', {'fabrics': fabrics}, request)
@@ -268,9 +279,11 @@ def newspaper(request: HttpRequest):
 
     if request.method == 'POST':
         title = request.POST.get('title', '')
-        short_title = request.POST.get('short-title',  '')
+        short_title = request.POST.get('short-title', '')
         if title.strip == '':
-            return retarget(render(request, 'error_alert.html', {'alert_message': f'Поле Название не должно быть пустым!'}), '#modal-alert')
+            return retarget(
+                render(request, 'error_alert.html', {'alert_message': f'Поле Название не должно быть пустым!'}),
+                '#modal-alert')
         if short_title.strip == '':
             return retarget(
                 render(request, 'error_alert.html', {'alert_message': f'Поле Краткое название не должно быть пустым!'}),
@@ -295,7 +308,8 @@ def newspaper(request: HttpRequest):
 @login_required()
 def newspaper_numbers(request: HttpRequest):
     if request.method == 'GET':
-        newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title', '-year').all()
+        newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title',
+                                                                                          '-year').all()
         form = NewspapersNumberForm()
         return render(request, 'press/newspaper-numbers.html', {'newspapers_numbers': newspapers_numbers, 'form': form})
 
@@ -322,6 +336,8 @@ def newspaper_numbers(request: HttpRequest):
             return retarget(
                 render(request, 'error_alert.html', {'alert_message': f'Исправьте следующие ошибки'}),
                 '#modal-alert')
-        newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title', 'year').all()
-        html = render_block_to_string('press/newspaper-numbers.html', 'numbers_list', {'newspapers_numbers': newspapers_numbers}, request)
+        newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title',
+                                                                                          'year').all()
+        html = render_block_to_string('press/newspaper-numbers.html', 'numbers_list',
+                                      {'newspapers_numbers': newspapers_numbers}, request)
         return HttpResponse(html, status='201')

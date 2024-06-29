@@ -17,6 +17,7 @@ def generate_report():
         distribution_date__lt=(report_month.replace(month=report_month.month+1) if report_month.month < 12 else report_month.replace(year=report_month.year +1, month=1, day=1))
     ).order_by('distribution_date').all()
 
+
     all_party_member = Person.objects.filter(party_member=True).filter(is_active=True).all()
     all_sympathizers = Sympathizer.objects.all()
 
@@ -108,6 +109,7 @@ def generate_report():
     ws1.merge_range('A1:E1', f"Распространение прессы Московская организация {datetime.date.today().year} год.", title_style)
     ws1.set_row(0, 20)
     ws1.set_row(1, 20)
+    current_line = 0
     for index, cell in enumerate(['Дата', 'Предприятие', 'Газета', 'Количество', 'Распространяли']):
         ws1.write(1, index, cell, head_style)
     for index, distrib in enumerate(all_distribs):

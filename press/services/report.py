@@ -18,7 +18,7 @@ def generate_report():
     ).order_by('distribution_date').all()
 
 
-    all_party_member = Person.objects.filter(party_member=True).filter(is_active=True).all()
+    all_party_member = Person.objects.filter(party_member=True).filter(is_active=True).order_by('last_name').all()
     all_sympathizers = Sympathizer.objects.all()
 
     all_members = ([{'name': x.full_name, 'months': {y: 0 for y in range(1, 13)}} for x in all_party_member] +

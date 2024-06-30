@@ -7,4 +7,4 @@ sqlparse==0.4.4
 XlsxWriter==3.2.0
 python-dotenv
 gunicorn
-psycopg=<3.1.8
+psycopg>=3.1.8

@@ -17,7 +17,7 @@ def generate_report():
         distribution_date__lt=(report_month.replace(month=report_month.month+1) if report_month.month < 12 else report_month.replace(year=report_month.year +1, month=1, day=1))
     ).order_by('distribution_date').all()
 
-    all_party_member = Person.objects.filter(party_member=True).filter(is_active=True).all()
+    all_party_member = Person.objects.filter(party_member=True).filter(is_active=True).order_by('last_name').all()
     all_sympathizers = Sympathizer.objects.all()
 
     all_members = ([{'name': x.full_name, 'months': {y: 0 for y in range(1, 13)}} for x in all_party_member] +
@@ -110,6 +110,7 @@ def generate_report():
     ws1.set_row(1, 20)
     for index, cell in enumerate(['Дата', 'Предприятие', 'Газета', 'Количество', 'Распространяли']):
         ws1.write(1, index, cell, head_style)
+    current_line = 0
     for index, distrib in enumerate(all_distribs):
         current_line = index+2
         ws1.write_string(current_line, 0, distrib.distribution_date.strftime("%d.%m.%Y"), simple_style)

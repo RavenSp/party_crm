@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ meta_descripiton }}">
     <title>{% if title %}{{ title }} | {% endif %}CRM Рабочй партии России</title>
-
+    <link rel="icon" type="image/png" href="{% static 'img/icons/96x96.png' %}" />
 
     <link rel="stylesheet" href="{% static 'css/select2.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/select2-bootstrap-5-theme.min.css' %}" />
@@ -18,6 +18,7 @@
      <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="{% static 'js/alpinejs3.13.7.js' %}" defer></script>
+    <link rel="manifest" href="{% static 'js/manifest.json' %}">
 
 </head>
 
@@ -25,7 +26,7 @@
     {% if request.user.is_authenticated %}
     {% include 'top_menu.html' %}
     {% endif %}
-    <main class="container pt-3 mt-5 mb-5" id="main-container">
+    <main class="container pt-3 mt-lg-5 mb-5" id="main-container">
         {% block main_content %}{% endblock %}
     </main>
     {% if request.user.is_authenticated %}
@@ -76,6 +77,17 @@
             })
         }
     </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register('/static/js/service-worker.js').then(function(registration) {
+                    console.log('ServiceWorker registered');
+                  }).catch(function(err) {
+                    console.log('ServiceWorker error: ', err);
+                  });
+            })
+        }
+    </script>   
 
     {% block scripts %}{% endblock %}
 </body>

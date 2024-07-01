@@ -127,8 +127,11 @@ def new_distrib(request: HttpRequest):
                 )
                 n_party_member.save()
 
-            return redirect('press:all')
-
+            distribs = distributions.get_all(
+                {'distribution_date__gte': (datetime.date.today() - datetime.timedelta(days=31)).strftime('%Y-%m-%d')})
+            factoryes = FactoryPoint.objects.select_related('town').order_by('-town__title', 'title').all()
+            result = render_block_to_string('press/all_distribution.html', 'main_content', {'distribs': distribs, 'factoryes': factoryes}, request)
+            return HttpResponse(result)
         else:
             print(form.errors)
 

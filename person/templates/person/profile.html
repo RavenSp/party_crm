@@ -5,6 +5,7 @@
         <div class="col">
             <h3>{{ user.full_name }}</h3>
             <hr>
+            {#            МЕНЮ НАВИГАЦИИ ЕСЛИ БУДЕТ НУЖНО #}
             {#            <ul class="nav nav-underline nav-fill">#}
             {#              <li class="nav-item">#}
             {#                <div class="nav-link active" aria-current="page">Мои раздачи</div>#}
@@ -25,8 +26,8 @@
                     <b>Последняя раздача:</b>
                 </div>
                 <div class="ms-2">
-                    {{ my_distribution.last.distribution.distribution_date|timesince }} назад
-                    ({{ my_distribution.last.distribution.distribution_date }})
+                    {{ all_distribution.last.distribution.distribution_date|timesince }} назад
+                    ({{ all_distribution.last.distribution.distribution_date }})
                 </div>
             </div>
 

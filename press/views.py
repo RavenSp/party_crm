@@ -336,17 +336,17 @@ def newspaper_numbers(request: HttpRequest):
 
     if request.method == 'POST':
         updated_request = request.POST.copy()
-        updated_request.update({'year': updated_request.get('year', '') + '-01'})
+        if request.POST.get('year', None):
+            updated_request.update({'year': updated_request.get('year', '') + '-01'})
 
         form = NewspapersNumberForm(updated_request)
 
         if form.is_valid():
             form.save()
         else:
-            print(form.errors)
+            err_lsit ='Исправьте следующие ошибки: ' +  str('\n- '.join([y for x in form.errors.values() for y in x]))
             return retarget(
-                render(request, 'error_alert.html', {'alert_message': f'Исправьте следующие ошибки'}),
-                '#modal-alert')
+                render(request, 'error_alert.html', {'alert_message':  err_lsit}), '#modal-alert')
         newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title',
                                                                                           'year').all()
         html = render_block_to_string('press/newspaper-numbers.html', 'numbers_list',

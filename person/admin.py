@@ -9,7 +9,7 @@ class PersonAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = Person
-    list_display = ('email', 'first_name', 'last_name', 'is_staff', 'is_active', 'party_member', 'last_login')
+    list_display = ('email', 'first_name', 'last_name', 'party_member', 'last_login', 'is_staff', 'is_active')
     list_filter = ('email', 'is_staff', 'is_active', 'party_member')
     fieldsets = (
         (None, {'fields': ('email', 'password', 'first_name', 'last_name')}),

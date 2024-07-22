@@ -1,4 +1,5 @@
 import datetime
+from django.db.models import F
 from django_htmx.http import retarget
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, HttpResponse, FileResponse, JsonResponse
@@ -25,7 +26,7 @@ def my_distribution(request: HttpRequest):
         if request.htmx:
             result = HttpResponse(render_block_to_string('press/all_distribution.html', 'table-distrib', {'distribs': distribs}, request), status='200')
         else:
-            factoryes = FactoryPoint.objects.select_related('town').order_by('-town__title', 'title').all()
+            factoryes = FactoryPoint.objects.select_related('town').order_by('town__title', 'title').all()
             result = render(request, 'press/all_distribution.html', {'distribs': distribs, 'factoryes': factoryes})
         return result
     if request.method == 'POST':
@@ -43,10 +44,11 @@ def new_distrib(request: HttpRequest):
             'start_time': (datetime.datetime.now() - datetime.timedelta(minutes=60)).strftime("%H:%M"),
             'end_time': datetime.datetime.now().strftime("%H:%M"),
         })
-        factoryes = FactoryPoint.objects.select_related('town').order_by('-town__title', 'title').all()
-        party_members = Person.objects.filter(party_member=True).order_by('-last_name').all()
-        sympathizers = Sympathizer.objects.all()
-        newspapers = NewspaperNumber.objects.select_related('newspaper').order_by('year').all()
+        factoryes = FactoryPoint.objects.select_related('town').order_by('town__title', 'title').all()
+        party_members = Person.objects.filter(party_member=True).order_by('last_name').all()
+        sympathizers = Sympathizer.objects.order_by('name').all()
+        newspapers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title',
+                                                                                          F('year').desc(nulls_last=True)).all()
         return render(request, 'press/new-distrib.html', {
             'form': form,
             'party_members': party_members,
@@ -138,6 +140,7 @@ def new_distrib(request: HttpRequest):
 
 @login_required()
 def new_party_member_distrib(request: HttpRequest):
+    # DEPRECATED
     already_selected = request.POST.getlist('party-members')
     party_members = Person.objects.filter(party_member=True)
     if len([x for x in already_selected if x != '']) > 0:
@@ -151,6 +154,7 @@ def new_party_member_distrib(request: HttpRequest):
 
 @login_required()
 def new_sympathizer_distrib(request: HttpRequest):
+    # DEPRECATED
     already_selected = request.POST.getlist('sympathizer-members')
     sympathizers = Sympathizer.objects.order_by('name').all()
     if len([x for x in already_selected if x != '']) > 0:
@@ -163,6 +167,7 @@ def new_sympathizer_distrib(request: HttpRequest):
 @login_required()
 @require_http_methods(['DELETE'])
 def hx_delete_party_member(request: HttpRequest, id_delete_member: int):
+    # DEPRECATED
     select_party_members = set(request.session.get('select_party_members', []))
     if str(id_delete_member) not in select_party_members:
         return HttpResponse('', status='204')
@@ -182,6 +187,7 @@ def hx_delete_party_member(request: HttpRequest, id_delete_member: int):
 @login_required()
 @require_http_methods(['POST'])
 def hx_add_party_member(request: HttpRequest):
+    # DEPRECATED
     new_member = request.POST.get('select-party-members', None)
     if new_member is None:
         print("пустой ID")
@@ -241,7 +247,7 @@ def towns(request: HttpRequest):
 
         return HttpResponse(html, status='201')
 
-
+#TODO: Слить с предыдущим методом
 @login_required()
 def towns_delete(request: HttpRequest, pk: int):
     if request.method == 'DELETE':
@@ -320,7 +326,7 @@ def newspaper(request: HttpRequest):
 def newspaper_numbers(request: HttpRequest):
     if request.method == 'GET':
         newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title',
-                                                                                          '-year').all()
+                                                                                          F('year').desc(nulls_last=True)).all()
         form = NewspapersNumberForm()
         return render(request, 'press/newspaper-numbers.html', {'newspapers_numbers': newspapers_numbers, 'form': form})
 
@@ -348,7 +354,7 @@ def newspaper_numbers(request: HttpRequest):
             return retarget(
                 render(request, 'error_alert.html', {'alert_message':  err_lsit}), '#modal-alert')
         newspapers_numbers = NewspaperNumber.objects.select_related('newspaper').order_by('newspaper__title',
-                                                                                          'year').all()
+                                                                                          F('year').desc(nulls_last=True)).all()
         html = render_block_to_string('press/newspaper-numbers.html', 'numbers_list',
                                       {'newspapers_numbers': newspapers_numbers}, request)
         return HttpResponse(html, status='201')

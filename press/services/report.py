@@ -143,7 +143,6 @@ def generate_report(report_month: datetime.date = datetime.date.today().replace(
                 'Октябрь', 'Ноябрь', 'Декабрь', 'Итого:']
     for index, cell in enumerate(row_text):
         ws2.write(1, index, cell, head_style)
-    print(all_members)
     for index, mbm in enumerate(all_members):
         current_line = index+2
         ws2.write_string(current_line, 0, mbm['name'], simple_style)

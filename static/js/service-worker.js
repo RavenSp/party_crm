@@ -5,7 +5,7 @@
             const strategies = workbox.strategies;
             
             workbox.routing.registerRoute(
-            	/.(?:css|js|jsx|json)(?|$)/,
+            	'/.(?:css|js|jsx|json)(?|$)/',
             	new workbox.strategies.StaleWhileRevalidate({
             		"cacheName": "assets",
             		plugins: [
@@ -18,7 +18,7 @@
             );
             
             workbox.routing.registerRoute(
-            	/.(?:png|jpg|jpeg|gif|woff2)$/,
+            	'/.(?:png|jpg|jpeg|gif|woff2)$/',
             	new workbox.strategies.CacheFirst({
             		"cacheName": "images",
             		plugins: [

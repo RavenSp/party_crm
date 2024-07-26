@@ -1,0 +1,24 @@
+site_name: Документация к CRM Рабочей партии России
+
+theme:
+  name: mkdocs
+  language: ru
+  favicon: img/icon.png
+  logo: img/icon.png
+  features:
+    - search.suggest
+    - search.highlight
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+
+plugins:
+  - search

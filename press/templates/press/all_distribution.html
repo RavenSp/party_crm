@@ -37,7 +37,7 @@
                     <div class="accordion" id="accordionPanelsDistrib mb-5">
                         {% for distirb in distribs %}
                             <div class="accordion-item">
-                                <h2 class="accordion-header">
+                                <h2 class="accordion-header" id="{{ distirb.pk }}">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                             data-bs-target="#panelsStayOpen-collapse{{ distirb.pk }}"
                                             aria-expanded="true"
@@ -93,7 +93,8 @@
                                             {{ distirb.description }}
                                         {% endif %}
                                         <div class="mb-1">
-                                            <i class="text-secondary">Автор записи: {{ distirb.autor.full_name }}</i>
+                                            <i class="text-secondary">Автор записи: {{ distirb.autor.full_name }}</i> |
+                                            <a href="#{{ distirb.pk }}">Скопировать для ВК</a>
                                         </div>
                                         {% if distirb.autor == user %}
                                             <hr>

@@ -93,16 +93,18 @@
                                             {{ distirb.description }}
                                         {% endif %}
                                         <div class="mb-1">
-                                            <i class="text-secondary">Автор записи: {{ distirb.autor.full_name }}</i> |
+                                            <i class="text-secondary">Автор записи: {{ distirb.autor.full_name }}</i>
                                             <button type="button" class="btn btn-secondary btn-sm" onclick="choiseText('vk{{ distirb.pk }}')" id="vk{{ distirb.pk }}btn">Скопировать для ВК</button>
                                             <span style="display: none" id="vk{{ distirb.pk }}">
-                                                Дата: {{ distirb.distribution_date }}
+                                                <p>Дата: {{ distirb.distribution_date }}</p>
                                                 <p>Нас.п.: {{ distirb.factory.town }}</p>
                                                 <p>Предприятие: {{ distirb.factory }}</p>
-                                                <p>Газеты: {% for number in distirb.numbers.all %}{{ number.quantity }} шт. ({{ number.number.newspaper.short_title }} {{ number.number.number }}){% if not forloop.last %}, {% endif %}{% if distirb.numbers.all and  distirb.sympathizer_members.all %}, {% endif %}{% endfor %}{% for member in distirb.sympathizer_members.all %}соч.{{ member.member.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                                                <p>Газеты: {% for number in distirb.numbers.all %}{{ number.quantity }} шт. ({{ number.number.newspaper.short_title }} {{ number.number.number }}){% if not forloop.last %}, {% endif %}{% endfor %}</p>
                                                 <p>Время: {{ distirb.start_time }} до {{ distirb.end_time }}</p>
-                                                <p>Участник:  {% with lenMem=distirb.party_members.all|length %}{{ distirb.sympathizer_members.all|length|add:lenMem }}{% endwith %}</p>
-                                                <p>Раздавали: {% for member in distirb.party_members.all %}{{ member.member.full_name }}{% if not forloop.last %},{% endif %}{% endfor %} </p>
+                                                <p>Участники:  {% with lenMem=distirb.party_members.all|length %}{{ distirb.sympathizer_members.all|length|add:lenMem }}{% endwith %}</p>
+                                                <p>Раздавали: {% for member in distirb.party_members.all %}{{ member.member.full_name }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if distirb.party_members.all|length > 0 and  distirb.sympathizer_members.all|length > 0 %}, {% endif %}{% for member in distirb.sympathizer_members.all %}соч. {{ member.member.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                                                {% if distirb.description %}<p>Примечание:</p>
+                                                <p>{{ distirb.description }}</p>{% endif %}
                                                 <p>Отчёт в приложение внесён</p>
                                             </span>
                                         </div>
@@ -167,8 +169,8 @@
             let elem = document.getElementById(el);
             let btn = document.getElementById(el+'btn')
             navigator.clipboard.writeText(elem.textContent);
-            console.log(elem.textContent);
             btn.innerText = 'Скопировано!';
+            setTimeout(() => {btn.innerText = 'Скопировать для ВК'}, 10000);
 
         }
     </script>

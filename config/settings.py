@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django_htmx',
     'widget_tweaks',
     'render_block',
+    'fabric.apps.FabricConfig',
     'person.apps.PersonConfig',
     'press.apps.PressConfig'
 ]

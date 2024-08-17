@@ -1,5 +1,6 @@
 import datetime
-from press.models import Distribution, Sympathizer, FactoryPoint
+from press.models import Distribution, Sympathizer
+from fabric.models import FactoryPoint
 from person.models import Person
 
 import xlsxwriter

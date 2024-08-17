@@ -1,6 +1,6 @@
 from django.forms.models import ModelForm
 from django import forms
-from .models import NewspaperNumber, Distribution, FactoryPoint
+from .models import NewspaperNumber, Distribution
 
 
 class DistributionForm(ModelForm):
@@ -8,11 +8,6 @@ class DistributionForm(ModelForm):
         model = Distribution
         fields = ['distribution_date', 'factory', 'start_time', 'end_time', 'description']
 
-
-class FabricForm(ModelForm):
-    class Meta:
-        model = FactoryPoint
-        fields = ['town', 'title', 'description']
 
 
 class NewspapersNumberForm(ModelForm):

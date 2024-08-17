@@ -25,7 +25,7 @@
             </div>
             <div class="dialog-body m-3">
                 <div class="mb-2" id="modal-alert"></div>
-                <form hx-post="{% url 'press:towns' %}" hx-target="#towns-list" id="town-form">
+                <form hx-post="{% url 'fabric:towns' %}" hx-target="#towns-list" id="town-form">
                     <div class="mb-3">
                         <label for="new-town"></label>
                         <input type="text" id="new-town" class="form-control" autocomplete="off" name="town-name">
@@ -50,7 +50,7 @@
                         <span class="badge text-bg-primary rounded-pill">{{ town.factories.all|length }}</span>
                     {% else %}
                         <span class="badge text-bg-primary rounded-pill"
-                              hx-delete="{% url 'press:towns-delete' pk=town.pk %}"
+                              hx-delete="{% url 'fabric:towns-delete' pk=town.pk %}"
                         >Удалить</span>
                     {% endif %}
                 </li>

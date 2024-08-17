@@ -41,7 +41,7 @@
     <div class="mb-2">
         <button class="btn btn-secondary" @click.prevent="document.getElementById('dialog-members').showModal();">Добавить
             раздающих</button>
-        <dialog id="dialog-members" class="choiceModal">
+        <dialog id="dialog-members" class="choiceModal h-75 overflow-x-hidden">
             <div class="dialog-header">
                 <h5 class="modal-title">Добавление раздающих</h5>
                 <button type="button" class="btn-close" aria-label="Close"
@@ -75,7 +75,7 @@
                     </div>
                 </span>
                 </div>
-                <div class="choice-list">
+                <div class="choice-list overflow-x-auto">
                     {% for member in party_members %}
                     <div class="form-check" x-show="show_item($el)">
                         <input class="form-check-input" type="checkbox" value="{{ member.pk }}"

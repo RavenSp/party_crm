@@ -1,6 +1,6 @@
 from django.forms.models import ModelForm
 from django import forms
-from .models import Newspaper, NewspaperNumber, Town, Distribution, FactoryPoint
+from .models import NewspaperNumber, Distribution, FactoryPoint
 
 
 class DistributionForm(ModelForm):

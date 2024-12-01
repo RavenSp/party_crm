@@ -7,8 +7,10 @@ from io import BytesIO
 from itertools import chain
 
 
-def generate_report(report_month: datetime.date = datetime.date.today().replace(day=1)):
-    # report_month = _report_month()
+def generate_report(report_month: datetime.date = None):
+    # report_month =
+    if report_month is None:
+        report_month = _report_month()
 
     all_distribs = Distribution.objects.filter(
         distribution_date__gte=report_month.replace(month=1, day=1)

@@ -223,7 +223,7 @@ def hx_distrib(request: HttpRequest, pk: int):
 
 @login_required()
 def report_generate(request: HttpRequest):
-    file_report = report.generate_report()
+    file_report = report.generate_report(report_month=datetime.date.today().replace(day=1))
     return FileResponse(file_report, filename='Отчёт о раздачах.xlsx', as_attachment=False)
 
 

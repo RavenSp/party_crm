@@ -1,0 +1,17 @@
+<form hx-post="{% url "press:report-generate" %}" hx-swap="outerHTML" id="report">
+    <div class="mb-2">
+        <label for="report-year">Год отчёта:</label>
+        <input type="number" name="report-year" id="report-year" class="form-control"
+               value="{% now "Y" %}"
+               min="2024" max="{% now "Y" %}" step=1">
+    </div>
+    <div class="mb-2">
+        <label for="report-email">Email для отправки отчёта:</label>
+        <input type="email" name="report-email" id="report-email" class="form-control"
+               value="{{ request.user.email }}">
+    </div>
+    <hr>
+    <div class="mb-3 d-flex justify-content-end gap-2">
+        <input type="submit" value="Отправить отчёт на email" class="btn btn-primary">
+    </div>
+</form>

@@ -5,8 +5,9 @@
     </div>
     <div class="offcanvas-body">
         <ul class="list-group list-group-flush">
-            <li class="list-group-item my-1">
-                <a href="{% url 'press:report-generate' %}" class="link-underline link-underline-opacity-0">
+            <li class="list-group-item my-1" x-data="{}">
+                <a href="#" class="link-underline link-underline-opacity-0"
+                   @click.prevent="document.getElementById('dialog-email').showModal();">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-file-earmark-excel" viewBox="0 0 16 16">
                         <path d="M5.884 6.68a.5.5 0 1 0-.768.64L7.349 10l-2.233 2.68a.5.5 0 0 0 .768.64L8 10.781l2.116 2.54a.5.5 0 0 0 .768-.641L8.651 10l2.233-2.68a.5.5 0 0 0-.768-.64L8 9.219l-2.116-2.54z"/>
@@ -14,6 +15,16 @@
                     </svg>
                     <span>Отчёт о раздачах</span>
                 </a>
+                <dialog id="dialog-email" class="choiceModal">
+                    <div class="dialog-header">
+                        <h5 class="modal-title">Формирование отчёта о раздачах</h5>
+                        <button type="button" class="btn-close" aria-label="Close"
+                                onclick="document.getElementById('dialog-email').close()"></button>
+                    </div>
+                    <div class="dialog-body m-3">
+                        {% include "press/report-form.html" %}
+                    </div>
+                </dialog>
             </li>
             <li class="list-group-item my-1">
                 <a hx-get="{% url 'press:towns' %}"

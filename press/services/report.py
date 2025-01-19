@@ -106,7 +106,7 @@ def generate_report(report_month: datetime.date = None):
     ws1.set_column('C:C', 33.3)
     ws1.set_column('D:D', 17.2)
     ws1.set_column('E:E', 72)
-    ws1.merge_range('A1:E1', f"Распространение прессы Московская организация {datetime.date.today().year} год.", title_style)
+    ws1.merge_range('A1:E1', f"Распространение прессы Московская организация {report_month.year} год.", title_style)
     ws1.set_row(0, 20)
     ws1.set_row(1, 20)
     for index, cell in enumerate(['Дата', 'Предприятие', 'Газета', 'Количество', 'Распространяли']):
@@ -137,7 +137,7 @@ def generate_report(report_month: datetime.date = None):
     ws2 = xls_file.add_worksheet('Распространители')
     ws2.set_column('A:A', 28.05)
     ws2.set_column('B:N', 13.35)
-    ws2.merge_range('A1:N1', f'Распространители Московская организация {datetime.date.today().year} год.', title_style)
+    ws2.merge_range('A1:N1', f'Распространители Московская организация {report_month.year} год.', title_style)
     ws2.set_row(0, 20)
     ws2.set_row(1, 20)
     row_text = ['Фамилия', 'Январь', 'Февраль', 'Март', 'Апрель',
@@ -164,7 +164,7 @@ def generate_report(report_month: datetime.date = None):
     ws3.set_column('A:A', 40)
     ws3.set_column('B:B', 30)
     ws3.set_column('C:O', 13.35)
-    ws3.merge_range('A1:O1', f'Предприятия Московская организация {datetime.date.today().year} год.', title_style)
+    ws3.merge_range('A1:O1', f'Предприятия Московская организация {report_month.year} год.', title_style)
     ws3.set_row(0, 20)
     ws3.set_row(1, 20)
     row_text = ['Предприятие', 'Город', 'Январь', 'Февраль', 'Март', 'Апрель',

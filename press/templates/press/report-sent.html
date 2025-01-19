@@ -1,5 +1,5 @@
 <div class="mb-2" id="report-place">
-    <h4>Отчёт о раздачах за {{ year }} год успешно отправлен на {{ email }}</h4>
+    <div>Отчёт о раздачах за {{ year }} год успешно отправлен на {{ email }}</div>
     <hr>
     <a hx-get="{% url "press:report-generate" %}"  hx-swap="outerHTML" hx-target="#report-place" class="btn btn-secondary">Назад</a>
 </div>

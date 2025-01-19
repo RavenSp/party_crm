@@ -10,7 +10,7 @@ from .models import FactoryPoint, Sympathizer, NewspaperNumber, NewspaperNumbers
     DistributionPartyMembers, DistributionSympathizerMember, Distribution, Town, Newspaper
 from helpers.common import name_normalizer
 from person.models import Person
-from press.services import distributions, report
+from press.services import distributions, report, mail
 from django.db import connection
 from render_block import render_block_to_string
 
@@ -225,13 +225,18 @@ def hx_distrib(request: HttpRequest, pk: int):
 def report_generate(request: HttpRequest):
     if request.method == "POST":
         report_year = int(request.POST.get("report-year", datetime.date.today().year))
-        report_month = datetime.date(report_year, 12, 1)
+        if report_year < datetime.date.today().year:
+            report_month = datetime.date(report_year, 12, 1)
+        else:
+            report_month = datetime.date(report_year, datetime.date.today().month, 1)
         report_email = request.POST.get("report-email", None)
+        if report_email is None:
+            return render(request, "press/report-form.html", {})
+        file_report = report.generate_report(report_month=report_month)
+        mail.send_report(report_email, report_year, file_report)
         return render(request, "press/report-sent.html", {"year": report_year, "email": report_email})
     elif request.method == "GET":
         return render(request, "press/report-form.html", {})
-    # file_report = report.generate_report(report_month=report_month)
-    # return FileResponse(file_report, filename='Отчёт о раздачах.xlsx', as_attachment=False)
 
 
 @login_required()

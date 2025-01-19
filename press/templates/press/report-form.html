@@ -1,0 +1,27 @@
+<form
+        hx-post="{% url "press:report-generate" %}"
+        hx-swap="outerHTML" id="report"
+        hx-validate="true"
+        hx-indicator="#spinner"
+        hx-ext="disable-element"
+        hx-disable-element=".to-disable"
+>
+    <div class="mb-2">
+        <label for="report-year">Год отчёта:</label>
+        <input type="number" name="report-year" id="report-year" class="form-control to-disable" required
+               value="{% now "Y" %}"
+               min="2024" max="{% now "Y" %}" step=1">
+    </div>
+    <div class="mb-2">
+        <label for="report-email">Email для отправки отчёта:</label>
+        <input type="email" name="report-email" id="report-email" class="form-control to-disable" required
+               value="{{ request.user.email }}">
+    </div>
+    <hr>
+    <div class="mb-3 d-flex gap-2">
+        <input type="submit" value="Отправить отчёт на email" class="btn btn-primary to-disable" >
+        <div class="spinner-border text-primary htmx-indicator" id="spinner" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</form>

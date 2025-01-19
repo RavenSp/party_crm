@@ -168,7 +168,7 @@
         function choiseText(el) {
             let elem = document.getElementById(el);
             let btn = document.getElementById(el+'btn')
-            navigator.clipboard.writeText(elem.textContent);
+            navigator.clipboard.writeText(elem.textContent.replace(/  +/g, ' '));
             btn.innerText = 'Скопировано!';
             setTimeout(() => {btn.innerText = 'Скопировать для ВК'}, 10000);
 

@@ -17,7 +17,8 @@ def generate_report(report_month: datetime.date = None):
         distribution_date__lt=(
             report_month.replace(month=report_month.month + 1) if report_month.month < 12 else report_month.replace(
                 year=report_month.year + 1, month=1, day=1))
-    ).order_by('distribution_date').all()
+    ).prefetch_related("numbers", "party_members", "party_members__member",
+                       "sympathizer_members", "sympathizer_members__member").order_by('distribution_date').all()
 
     all_party_member = Person.objects.filter(party_member=True).filter(is_active=True).order_by('last_name').all()
     all_sympathizers = Sympathizer.objects.all()

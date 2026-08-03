@@ -1,0 +1,14 @@
+[run]
+source =
+    person
+    press
+    helpers
+omit =
+    */migrations/*
+    */tests.py
+    config/*
+    manage.py
+    person/signals.py
+
+[report]
+show_missing = True

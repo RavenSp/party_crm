@@ -1,0 +1,23 @@
+# Контекст сборки Docker-образа party_crm
+.git/
+.gitignore
+venv/
+.venv/
+__pycache__/
+*.pyc
+.coverage
+.coverage.*
+htmlcov/
+
+# Секреты и локальные настройки в образ не попадают
+.env
+config/local_settings.py
+
+# Артефакты, не нужные в контейнере
+staticfiles/
+deploy/
+docs/
+.gigacode/
+.vscode/
+run_tests.sh
+setup.sh

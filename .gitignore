@@ -164,3 +164,7 @@ node_modules
 *.sqlite3
 config/local_settings.py
 static/admin
+
+.continue/*
+*.bak
+*.bkp
